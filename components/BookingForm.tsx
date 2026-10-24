@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowIcon, CheckIcon, ClockIcon, PhoneIcon, SwapIcon, WhatsAppIcon } from "./Icons";
+import Link from "next/link";
+import { ArrowIcon, CheckIcon, ClockIcon, PhoneIcon, PinIcon, SwapIcon, WhatsAppIcon } from "./Icons";
 import { useBooking, useToast } from "./Providers";
-import { PLACES, PLACE_GROUPS, TRIP_NAMES, placeName } from "@/lib/places";
+import { PIN_SLUG, PLACES, PLACE_GROUPS, TRIP_NAMES, placeName, placePoint, type Point } from "@/lib/places";
+import { MapPicker } from "./MapPicker";
 import { PHONE_DISPLAY, PHONE_E164, PHONE_HREF, formatPhone, whatsappLink } from "@/lib/config";
 import { friendlyError, getSupabase } from "@/lib/supabase";
 
 type Rider = { name: string; phone: string; vehicle_number: string | null };
+type RouteInfo = { source: "road" | "estimate"; distanceKm: number; durationMin: number; coordinates?: [number, number][] };
 type Done = { code: string; phone: string; route: string; name: string; budget: number | null; riders: Rider[] };
 
 const FALLBACK_RIDER: Rider = { name: "Mahi", phone: PHONE_E164, vehicle_number: null };
@@ -33,6 +36,11 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
   const [step, setStep] = useState<"form" | "details" | "done">("form");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<Done | null>(null);
+  const [pickupPin, setPickupPin] = useState<Point | null>(null);
+  const [dropPin, setDropPin] = useState<Point | null>(null);
+  const [mapOpen, setMapOpen] = useState(false);
+  const [mapMode, setMapMode] = useState<"pickup" | "dropoff">("pickup");
+  const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -41,6 +49,8 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
   const [note, setNote] = useState("");
 
   const needsDropoff = trip === "city-ride";
+  const pickupPoint: Point | null = pickup === PIN_SLUG ? pickupPin : pickup ? placePoint(pickup) : null;
+  const dropPoint: Point | null = dropoff === PIN_SLUG ? dropPin : dropoff ? placePoint(dropoff) : null;
   const lastNonce = useRef<number | null>(null);
   const pickupRef = useRef<HTMLSelectElement>(null);
   const dropoffRef = useRef<HTMLSelectElement>(null);
@@ -68,12 +78,44 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
 
   const dropoffOptions = useMemo(() => PLACES.filter((p) => p.slug !== pickup), [pickup]);
   useEffect(() => {
-    if (dropoff && dropoff === pickup) setDropoff("");
+    if (dropoff && dropoff === pickup && dropoff !== PIN_SLUG) setDropoff("");
   }, [pickup, dropoff]);
 
+  // Road distance and time once both ends are known.
+  const fromKey = pickupPoint ? `${pickupPoint.lat},${pickupPoint.lng}` : "";
+  const toKey = dropPoint ? `${dropPoint.lat},${dropPoint.lng}` : "";
+  useEffect(() => {
+    setRouteInfo(null);
+    if (!needsDropoff || !fromKey || !toKey || fromKey === toKey) return;
+    const controller = new AbortController();
+    fetch(`/api/route?from=${fromKey}&to=${toKey}`, { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => data && setRouteInfo(data as RouteInfo))
+      .catch(() => {});
+    return () => controller.abort();
+  }, [needsDropoff, fromKey, toKey]);
+
+  function pickFromMap(mode: "pickup" | "dropoff", point: Point) {
+    const other = mode === "pickup" ? dropPoint : pickupPoint;
+    if (needsDropoff && other && !point.pinned && other.slug === point.slug) {
+      show("Pickup and drop-off can't be the same place");
+      return;
+    }
+    if (mode === "pickup") {
+      setPickup(point.slug);
+      setPickupPin(point.pinned ? point : null);
+      if (needsDropoff && !dropPoint) setMapMode("dropoff");
+    } else {
+      setDropoff(point.slug);
+      setDropPin(point.pinned ? point : null);
+    }
+    resetSteps();
+  }
+
+  const nameOf = (point: Point | null, slug: string) => (slug === PIN_SLUG ? point?.name || "Pinned location" : placeName(slug));
   const route = needsDropoff
-    ? `${placeName(pickup)} → ${placeName(dropoff)}`
-    : `${TRIP_NAMES[trip] ?? "Tour"} from ${placeName(pickup)}`;
+    ? `${nameOf(pickupPoint, pickup)} → ${nameOf(dropPoint, dropoff)}`
+    : `${TRIP_NAMES[trip] ?? "Tour"} from ${nameOf(pickupPoint, pickup)}`;
 
   const scheduledAt = later && time ? `${time}:00+05:30` : null; // Khajuraho is on India time
 
@@ -93,8 +135,12 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
   function swap() {
     const a = pickup;
     const b = dropoff;
+    const pa = pickupPin;
+    const pb = dropPin;
     setPickup(b);
     setDropoff(a);
+    setPickupPin(pb);
+    setDropPin(pa);
     resetSteps();
   }
 
@@ -139,10 +185,14 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
 
     setBusy(true);
     const supabase = getSupabase();
-    const { data, error } = await supabase.rpc("request_ride", {
+    const { data, error } = await supabase.rpc("request_ride_v2", {
       p_trip: trip,
       p_pickup: pickup,
       p_dropoff: needsDropoff ? dropoff : null,
+      p_pickup_lat: pickup === PIN_SLUG ? pickupPin?.lat : null,
+      p_pickup_lng: pickup === PIN_SLUG ? pickupPin?.lng : null,
+      p_dropoff_lat: needsDropoff && dropoff === PIN_SLUG ? dropPin?.lat : null,
+      p_dropoff_lng: needsDropoff && dropoff === PIN_SLUG ? dropPin?.lng : null,
       p_rider_name: name,
       p_rider_phone: phone,
       p_passengers: Number(riders),
@@ -158,6 +208,11 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
     }
     const list = await supabase.rpc("get_available_riders");
     const available: Rider[] = !list.error && Array.isArray(list.data) && list.data.length ? list.data : [FALLBACK_RIDER];
+    try {
+      window.sessionStorage.setItem("indo-ride-phone", row.rider_phone);
+    } catch {
+      // private mode: tracking just asks for the phone number again
+    }
     setDone({ code: row.booking_code, phone: row.rider_phone, route, name: name.trim(), budget: budgetValue, riders: available });
     setStep("done");
     setBusy(false);
@@ -227,6 +282,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
                 value={pickup}
                 onChange={(e) => {
                   setPickup(e.target.value);
+                  if (e.target.value !== PIN_SLUG) setPickupPin(null);
                   resetSteps();
                 }}
                 className={`mt-0.5 w-full truncate bg-transparent text-[0.97rem] font-medium outline-none ${pickup ? "" : "text-[#8f9993] font-normal"}`}
@@ -234,6 +290,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
                 <option value="" disabled>
                   Where should we pick you up?
                 </option>
+                {pickupPin && <option value={PIN_SLUG}>{pickupPin.name === "My location" ? "My location (pin)" : `Pin: ${pickupPin.name}`}</option>}
                 {PLACE_GROUPS.map((g) => (
                   <optgroup key={g} label={g}>
                     {PLACES.filter((p) => p.group === g).map((p) => (
@@ -270,6 +327,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
                   value={dropoff}
                   onChange={(e) => {
                     setDropoff(e.target.value);
+                    if (e.target.value !== PIN_SLUG) setDropPin(null);
                     resetSteps();
                   }}
                   className={`mt-0.5 w-full truncate bg-transparent text-[0.97rem] font-medium outline-none ${dropoff ? "" : "text-[#8f9993] font-normal"}`}
@@ -277,6 +335,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
                   <option value="" disabled>
                     Where to?
                   </option>
+                  {dropPin && <option value={PIN_SLUG}>{`Pin: ${dropPin.name}`}</option>}
                   {PLACE_GROUPS.map((g) => (
                     <optgroup key={g} label={g}>
                       {dropoffOptions
@@ -311,6 +370,35 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
                 className="input"
               />
             </div>
+          )}
+        </div>
+
+        <div className="px-1.5 pt-2.5">
+          <button
+            type="button"
+            onClick={() => setMapOpen((v) => !v)}
+            aria-expanded={mapOpen}
+            className="inline-flex items-center gap-2 text-[0.84rem] font-semibold text-green underline decoration-green/40 underline-offset-4"
+          >
+            <PinIcon className="h-4 w-4" /> {mapOpen ? "Hide map" : "Choose on map"}
+          </button>
+          {mapOpen && (
+            <MapPicker
+              pickup={pickupPoint}
+              dropoff={dropPoint}
+              needsDropoff={needsDropoff}
+              mode={needsDropoff ? mapMode : "pickup"}
+              onMode={setMapMode}
+              onPick={pickFromMap}
+              routeCoords={routeInfo?.coordinates ?? null}
+            />
+          )}
+          {routeInfo && needsDropoff && (
+            <p className="mt-2 text-[0.8rem] text-ink-soft">
+              {routeInfo.source === "road" ? "By road: " : "About "}
+              <strong className="text-ink">{routeInfo.distanceKm} km</strong> · about {routeInfo.durationMin} min
+              {routeInfo.source === "estimate" ? " (estimate)" : ""}
+            </p>
           )}
         </div>
 
@@ -411,16 +499,21 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
                   );
                 })}
               </ul>
-              <button
-                type="button"
-                onClick={() => {
-                  setStep("form");
-                  setDone(null);
-                }}
-                className="btn btn-outline btn-sm"
-              >
-                Request another ride
-              </button>
+              <div className="flex flex-wrap gap-2">
+                <Link href={`/track?code=${encodeURIComponent(done.code)}`} className="btn btn-sun btn-sm">
+                  <PinIcon className="h-4 w-4" /> Track your rider
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep("form");
+                    setDone(null);
+                  }}
+                  className="btn btn-outline btn-sm"
+                >
+                  Request another ride
+                </button>
+              </div>
             </div>
           </div>
         )}

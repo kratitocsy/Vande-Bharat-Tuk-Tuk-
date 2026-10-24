@@ -1,21 +1,21 @@
-export type Place = { slug: string; name: string; group: "Stay and travel" | "Temples" | "Sights" };
+export type Place = { slug: string; name: string; group: "Stay and travel" | "Temples" | "Sights"; lat: number; lng: number };
 
 export const PLACES: Place[] = [
-  { slug: "khajuraho-town", name: "Khajuraho town (hotel / homestay)", group: "Stay and travel" },
-  { slug: "bus-stand", name: "Khajuraho Bus Stand", group: "Stay and travel" },
-  { slug: "airport", name: "Khajuraho Airport (HJR)", group: "Stay and travel" },
-  { slug: "railway-station", name: "Khajuraho Railway Station", group: "Stay and travel" },
-  { slug: "rajnagar", name: "Rajnagar", group: "Stay and travel" },
-  { slug: "western-temples", name: "Western Group of Temples", group: "Temples" },
-  { slug: "matangeshwar-temple", name: "Matangeshwar Temple", group: "Temples" },
-  { slug: "eastern-temples", name: "Eastern Group (Jain Temples)", group: "Temples" },
-  { slug: "javari-temple", name: "Javari Temple", group: "Temples" },
-  { slug: "duladeo-temple", name: "Duladeo Temple (Southern Group)", group: "Temples" },
-  { slug: "chaturbhuj-temple", name: "Chaturbhuj Temple (Southern Group)", group: "Temples" },
-  { slug: "archaeological-museum", name: "Archaeological Museum", group: "Sights" },
-  { slug: "shiv-sagar-lake", name: "Shiv Sagar Lake", group: "Sights" },
-  { slug: "shilpgram", name: "Shilpgram", group: "Sights" },
-  { slug: "beni-sagar-dam", name: "Beni Sagar Dam", group: "Sights" },
+  { slug: "khajuraho-town", name: "Khajuraho town (hotel / homestay)", group: "Stay and travel", lat: 24.853, lng: 79.929 },
+  { slug: "bus-stand", name: "Khajuraho Bus Stand", group: "Stay and travel", lat: 24.85, lng: 79.929 },
+  { slug: "airport", name: "Khajuraho Airport (HJR)", group: "Stay and travel", lat: 24.8172, lng: 79.9186 },
+  { slug: "railway-station", name: "Khajuraho Railway Station", group: "Stay and travel", lat: 24.915, lng: 79.932 },
+  { slug: "rajnagar", name: "Rajnagar", group: "Stay and travel", lat: 24.896, lng: 79.908 },
+  { slug: "western-temples", name: "Western Group of Temples", group: "Temples", lat: 24.852, lng: 79.9218 },
+  { slug: "matangeshwar-temple", name: "Matangeshwar Temple", group: "Temples", lat: 24.851, lng: 79.9213 },
+  { slug: "eastern-temples", name: "Eastern Group (Jain Temples)", group: "Temples", lat: 24.8448, lng: 79.9358 },
+  { slug: "javari-temple", name: "Javari Temple", group: "Temples", lat: 24.8452, lng: 79.9352 },
+  { slug: "duladeo-temple", name: "Duladeo Temple (Southern Group)", group: "Temples", lat: 24.8335, lng: 79.9305 },
+  { slug: "chaturbhuj-temple", name: "Chaturbhuj Temple (Southern Group)", group: "Temples", lat: 24.8238, lng: 79.9255 },
+  { slug: "archaeological-museum", name: "Archaeological Museum", group: "Sights", lat: 24.8525, lng: 79.923 },
+  { slug: "shiv-sagar-lake", name: "Shiv Sagar Lake", group: "Sights", lat: 24.8505, lng: 79.924 },
+  { slug: "shilpgram", name: "Shilpgram", group: "Sights", lat: 24.8475, lng: 79.9318 },
+  { slug: "beni-sagar-dam", name: "Beni Sagar Dam", group: "Sights", lat: 24.8305, lng: 79.9045 },
 ];
 
 export const PLACE_GROUPS = ["Stay and travel", "Temples", "Sights"] as const;
@@ -92,3 +92,21 @@ export const TRIP_NAMES: Record<string, string> = {
   "panna-national-park": "Panna National Park gate",
   "pandav-falls": "Pandav Falls",
 };
+
+export const PIN_SLUG = "pinned-location";
+export const PIN_NAME = "Pinned on map";
+
+export type Point = { slug: string; name: string; lat: number; lng: number; pinned: boolean };
+
+// Khajuraho area. Matches the limits enforced by the database.
+export const REGION = { south: 24.35, north: 25.35, west: 79.4, east: 80.4 };
+export const KHAJURAHO_CENTER = { lat: 24.8530, lng: 79.9290 };
+
+export function inRegion(lat: number, lng: number) {
+  return lat >= REGION.south && lat <= REGION.north && lng >= REGION.west && lng <= REGION.east;
+}
+
+export function placePoint(slug: string): Point | null {
+  const p = PLACES.find((x) => x.slug === slug);
+  return p ? { slug: p.slug, name: p.name, lat: p.lat, lng: p.lng, pinned: false } : null;
+}

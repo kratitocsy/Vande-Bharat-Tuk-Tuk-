@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { Header } from "@/components/Header";
-import { PhoneIcon, WhatsAppIcon } from "@/components/Icons";
+import { PhoneIcon, PinIcon, WhatsAppIcon } from "@/components/Icons";
 import { useToast } from "@/components/Providers";
 import { PHONE_DISPLAY, PHONE_HREF, formatPhone, whatsappLink } from "@/lib/config";
 import { friendlyError, getSupabase } from "@/lib/supabase";
@@ -17,6 +17,10 @@ type Req = {
   trip_name: string;
   pickup_name: string;
   dropoff_name: string | null;
+  pickup_lat: number | null;
+  pickup_lng: number | null;
+  dropoff_lat: number | null;
+  dropoff_lng: number | null;
   scheduled_at: string | null;
   passengers: number;
   customer_name: string;
@@ -57,6 +61,9 @@ export default function RiderPage() {
   const [authBusy, setAuthBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [sharing, setSharing] = useState(false);
+  const watchId = useRef<number | null>(null);
+  const lastSent = useRef(0);
 
   // Session ------------------------------------------------------------------
   useEffect(() => {
@@ -81,7 +88,7 @@ export default function RiderPage() {
 
   const loadRequests = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await getSupabase().rpc("rider_requests");
+    const { data, error } = await getSupabase().rpc("rider_requests_v2");
     setLoading(false);
     if (error) {
       if (error.code === "42501") setMe(null);
@@ -145,6 +152,40 @@ export default function RiderPage() {
     loadRequests();
   }
 
+  const stopSharing = useCallback(async () => {
+    if (watchId.current !== null) {
+      navigator.geolocation.clearWatch(watchId.current);
+      watchId.current = null;
+    }
+    setSharing(false);
+    await getSupabase().rpc("rider_stop_sharing");
+  }, []);
+
+  function startSharing() {
+    if (!navigator.geolocation) return show("This phone can't share its location");
+    setSharing(true);
+    lastSent.current = 0;
+    watchId.current = navigator.geolocation.watchPosition(
+      (pos) => {
+        if (Date.now() - lastSent.current < 8000) return; // one update every 8 seconds is plenty
+        lastSent.current = Date.now();
+        getSupabase()
+          .rpc("rider_update_location", { p_lat: pos.coords.latitude, p_lng: pos.coords.longitude, p_accuracy: pos.coords.accuracy })
+          .then(({ error }) => {
+            if (error) show(friendlyError(error));
+          });
+      },
+      () => {
+        show("We could not get your location. Allow location for this site and try again.");
+        setSharing(false);
+        if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
+        watchId.current = null;
+      },
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 },
+    );
+    show("Sharing your live location. Keep this page open while you ride.");
+  }
+
   async function toggleAvailable() {
     if (!me) return;
     const next = !me.is_available;
@@ -160,6 +201,18 @@ export default function RiderPage() {
     done: requests.filter((r) => r.mine && (r.status === "completed" || r.status === "cancelled")),
   };
   const shown = lists[tab];
+  const activeRides = lists.mine.length;
+
+  useEffect(() => {
+    if (activeRides === 0 && watchId.current !== null) stopSharing();
+  }, [activeRides, stopSharing]);
+
+  useEffect(
+    () => () => {
+      if (watchId.current !== null) navigator.geolocation.clearWatch(watchId.current);
+    },
+    [],
+  );
 
   // Screens ------------------------------------------------------------------
   const shell = (children: React.ReactNode) => (
@@ -261,6 +314,17 @@ export default function RiderPage() {
         </div>
       </div>
 
+      {activeRides > 0 && (
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-paper px-4 py-3">
+          <p className="text-[0.88rem] text-ink-soft">
+            {sharing ? "Customers can see where you are. Keep this page open." : "Let your customer see you on the map while you ride."}
+          </p>
+          <button type="button" onClick={sharing ? stopSharing : startSharing} className={`btn btn-sm ${sharing ? "btn-outline" : "btn-sun"}`}>
+            <PinIcon className="h-4 w-4" /> {sharing ? "Stop sharing" : "Share my location"}
+          </button>
+        </div>
+      )}
+
       <div role="tablist" aria-label="Requests" className="mb-6 flex gap-1 rounded-full bg-cream-2 p-1">
         {([
           ["new", "New", lists.new.length],
@@ -314,6 +378,29 @@ export default function RiderPage() {
                     <div className="flex gap-2 sm:col-span-2"><dt className="text-muted">Note</dt><dd className="font-medium">{r.pickup_note}</dd></div>
                   )}
                 </dl>
+
+                {r.pickup_lat !== null && r.pickup_lng !== null && (
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[0.85rem] font-semibold">
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${r.pickup_lat},${r.pickup_lng}&travelmode=driving`}
+                      target="_blank"
+                      rel="noopener"
+                      className="inline-flex items-center gap-1.5 text-green underline decoration-green/40 underline-offset-4"
+                    >
+                      <PinIcon className="h-4 w-4" /> Directions to pickup
+                    </a>
+                    {r.dropoff_lat !== null && r.dropoff_lng !== null && (
+                      <a
+                        href={`https://www.google.com/maps/dir/?api=1&origin=${r.pickup_lat},${r.pickup_lng}&destination=${r.dropoff_lat},${r.dropoff_lng}&travelmode=driving`}
+                        target="_blank"
+                        rel="noopener"
+                        className="text-green underline decoration-green/40 underline-offset-4"
+                      >
+                        See the whole trip
+                      </a>
+                    )}
+                  </div>
+                )}
 
                 {r.status === "new" && (
                   <div className="mt-4 flex flex-wrap gap-2.5">
