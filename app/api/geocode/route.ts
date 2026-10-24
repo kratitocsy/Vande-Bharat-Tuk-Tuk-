@@ -36,8 +36,8 @@ export async function GET(request: Request) {
     const res = await fetch(url, { signal: AbortSignal.timeout(6000), cache: "no-store" });
     if (!res.ok) {
       const detail = (await res.text().catch(() => "")).slice(0, 160);
-      console.warn("[geocode] upstream", res.status, detail);
-      return NextResponse.json({ error: "Search is unavailable right now", upstream: res.status, detail }, { status: 502 });
+      console.warn("[geocode] upstream", res.status, detail.replaceAll(key, "***"));
+      return NextResponse.json({ error: "Search is unavailable right now" }, { status: 502 });
     }
     const raw = await res.json();
     const hit = pick(raw);
@@ -46,6 +46,6 @@ export async function GET(request: Request) {
     return NextResponse.json(hit);
   } catch (error) {
     console.warn("[geocode] failed", error instanceof Error ? error.message : error);
-    return NextResponse.json({ error: "Search is unavailable right now", detail: error instanceof Error ? error.message : "error" }, { status: 502 });
+    return NextResponse.json({ error: "Search is unavailable right now" }, { status: 502 });
   }
 }

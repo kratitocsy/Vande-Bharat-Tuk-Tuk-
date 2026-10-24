@@ -35,7 +35,7 @@ export async function GET(request: Request) {
         `${from.lng},${from.lat};${to.lng},${to.lat}?geometries=geojson&overview=full&steps=false&alternatives=false`;
       const res = await fetch(url, { signal: AbortSignal.timeout(6000), cache: "no-store" });
       if (!res.ok) {
-        upstream = `${res.status} ${(await res.text().catch(() => "")).slice(0, 160)}`;
+        upstream = `${res.status} ${(await res.text().catch(() => "")).slice(0, 160).replaceAll(key, "***")}`;
         console.warn("[route] upstream", upstream);
       }
       if (res.ok) {
@@ -62,7 +62,6 @@ export async function GET(request: Request) {
   const km = Math.round(straightLineKm(from, to) * 1.3 * 10) / 10;
   return NextResponse.json({
     source: "estimate",
-    upstream,
     distanceKm: km,
     durationMin: Math.max(1, Math.round((km / 20) * 60)), // about 20 km/h in town
   });
