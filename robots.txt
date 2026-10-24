@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://indo-tuk-tuk.vercel.app/sitemap.xml
