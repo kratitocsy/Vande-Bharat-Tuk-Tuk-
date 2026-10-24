@@ -1,17 +1,21 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ArrowIcon, CheckIcon, ClockIcon, PhoneIcon, PinIcon, SwapIcon, WhatsAppIcon } from "./Icons";
 import { useBooking, useToast } from "./Providers";
-import { PIN_SLUG, PLACES, PLACE_GROUPS, TRIP_NAMES, placeName, placePoint, type Point } from "@/lib/places";
-import { MapPicker } from "./MapPicker";
+import { useHero } from "./HeroShell";
+import { PlaceInput, type Choice, type PlaceInputHandle } from "./PlaceInput";
+import { RideMap, type MapApi } from "./RideMap";
+import { PIN_SLUG, TRIP_NAMES, inRegion, placePoint, type Point } from "@/lib/places";
 import { PHONE_DISPLAY, PHONE_E164, PHONE_HREF, formatPhone, whatsappLink } from "@/lib/config";
 import { friendlyError, getSupabase } from "@/lib/supabase";
 
 type Rider = { name: string; phone: string; vehicle_number: string | null };
 type RouteInfo = { source: "road" | "estimate"; distanceKm: number; durationMin: number; coordinates?: [number, number][] };
 type Done = { code: string; phone: string; route: string; name: string; budget: number | null; riders: Rider[] };
+type Target = "pickup" | "dropoff";
 
 const FALLBACK_RIDER: Rider = { name: "Mahi", phone: PHONE_E164, vehicle_number: null };
 
@@ -27,20 +31,21 @@ type Props = { initialTrip?: string; initialDropoff?: string; showQuickPicks?: b
 export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQuickPicks = false, idPrefix = "" }: Props) {
   const { show } = useToast();
   const { intent } = useBooking();
+  const hero = useHero();
+  const inHero = Boolean(hero.slot);
 
   const [trip, setTrip] = useState(initialTrip);
-  const [pickup, setPickup] = useState("");
-  const [dropoff, setDropoff] = useState(initialDropoff ?? "");
+  const [pickup, setPickup] = useState<Point | null>(null);
+  const [dropoff, setDropoff] = useState<Point | null>(() => (initialDropoff ? placePoint(initialDropoff) : null));
+  const [target, setTarget] = useState<Target>("pickup");
   const [later, setLater] = useState(false);
   const [time, setTime] = useState("");
   const [step, setStep] = useState<"form" | "details" | "done">("form");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<Done | null>(null);
-  const [pickupPin, setPickupPin] = useState<Point | null>(null);
-  const [dropPin, setDropPin] = useState<Point | null>(null);
-  const [mapOpen, setMapOpen] = useState(false);
-  const [mapMode, setMapMode] = useState<"pickup" | "dropoff">("pickup");
   const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
+  const [mapWanted, setMapWanted] = useState(false); // used when the page has no hero to hold the map
+  const [mapFailed, setMapFailed] = useState(false);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -49,15 +54,31 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
   const [note, setNote] = useState("");
 
   const needsDropoff = trip === "city-ride";
-  const pickupPoint: Point | null = pickup === PIN_SLUG ? pickupPin : pickup ? placePoint(pickup) : null;
-  const dropPoint: Point | null = dropoff === PIN_SLUG ? dropPin : dropoff ? placePoint(dropoff) : null;
+  const mapActive = inHero ? hero.active && !mapFailed : mapWanted && !mapFailed;
+
   const lastNonce = useRef<number | null>(null);
-  const pickupRef = useRef<HTMLSelectElement>(null);
-  const dropoffRef = useRef<HTMLSelectElement>(null);
+  const pickupInput = useRef<PlaceInputHandle>(null);
+  const dropoffInput = useRef<PlaceInputHandle>(null);
   const timeRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
   const budgetRef = useRef<HTMLInputElement>(null);
+  const mapApi = useRef<MapApi | null>(null);
+
+  const wakeMap = useCallback(() => {
+    if (mapFailed) return;
+    if (inHero) hero.setActive(true);
+    else setMapWanted(true);
+  }, [hero, inHero, mapFailed]);
+
+  const resetSteps = () => setStep("form");
+
+  function onMapStatus(s: "loading" | "ready" | "failed") {
+    if (s === "failed") {
+      setMapFailed(true);
+      if (inHero) hero.setActive(false); // bring the picture back
+    }
+  }
 
   // Ride cards and chips fill the form through the shared booking intent.
   useEffect(() => {
@@ -66,24 +87,19 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
     setTrip(intent.trip);
     setStep("form");
     if (intent.dropoff) {
-      setPickup("khajuraho-town");
-      setDropoff(intent.dropoff);
+      setPickup(placePoint("khajuraho-town"));
+      setDropoff(placePoint(intent.dropoff));
     } else if (intent.trip === "city-ride") {
-      setDropoff("");
+      setDropoff(null);
     }
     if (intent.trip !== "city-ride" || !intent.dropoff) {
-      window.setTimeout(() => pickupRef.current?.focus({ preventScroll: true }), 450);
+      window.setTimeout(() => pickupInput.current?.focus(), 450);
     }
   }, [intent]);
 
-  const dropoffOptions = useMemo(() => PLACES.filter((p) => p.slug !== pickup), [pickup]);
-  useEffect(() => {
-    if (dropoff && dropoff === pickup && dropoff !== PIN_SLUG) setDropoff("");
-  }, [pickup, dropoff]);
-
   // Road distance and time once both ends are known.
-  const fromKey = pickupPoint ? `${pickupPoint.lat},${pickupPoint.lng}` : "";
-  const toKey = dropPoint ? `${dropPoint.lat},${dropPoint.lng}` : "";
+  const fromKey = pickup ? `${pickup.lat},${pickup.lng}` : "";
+  const toKey = dropoff ? `${dropoff.lat},${dropoff.lng}` : "";
   useEffect(() => {
     setRouteInfo(null);
     if (!needsDropoff || !fromKey || !toKey || fromKey === toKey) return;
@@ -95,33 +111,75 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
     return () => controller.abort();
   }, [needsDropoff, fromKey, toKey]);
 
-  function pickFromMap(mode: "pickup" | "dropoff", point: Point) {
-    const other = mode === "pickup" ? dropPoint : pickupPoint;
-    if (needsDropoff && other && !point.pinned && other.slug === point.slug) {
-      show("Pickup and drop-off can't be the same place");
-      return;
-    }
-    if (mode === "pickup") {
-      setPickup(point.slug);
-      setPickupPin(point.pinned ? point : null);
-      if (needsDropoff && !dropPoint) setMapMode("dropoff");
-    } else {
-      setDropoff(point.slug);
-      setDropPin(point.pinned ? point : null);
-    }
+  function setPoint(which: Target, point: Point | null) {
+    if (which === "pickup") setPickup(point);
+    else setDropoff(point);
     resetSteps();
   }
 
-  const nameOf = (point: Point | null, slug: string) => (slug === PIN_SLUG ? point?.name || "Pinned location" : placeName(slug));
-  const route = needsDropoff
-    ? `${nameOf(pickupPoint, pickup)} → ${nameOf(dropPoint, dropoff)}`
-    : `${TRIP_NAMES[trip] ?? "Tour"} from ${nameOf(pickupPoint, pickup)}`;
+  function sameAsOther(which: Target, point: Point) {
+    const other = which === "pickup" ? dropoff : pickup;
+    return Boolean(needsDropoff && other && !point.pinned && !other.pinned && other.slug === point.slug);
+  }
+
+  // A tap on the map, or a place chosen from the list.
+  function pickPoint(which: Target, point: Point) {
+    if (sameAsOther(which, point)) {
+      show("Pickup and drop-off can't be the same place");
+      return;
+    }
+    setPoint(which, point);
+    if (which === "pickup" && needsDropoff && !dropoff) {
+      setTarget("dropoff");
+      window.setTimeout(() => dropoffInput.current?.focus(), 150);
+    }
+  }
+
+  function useMyLocation() {
+    if (!navigator.geolocation) return show("This browser can't share your location");
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        if (!inRegion(lat, lng)) return show("You seem to be outside Khajuraho. Type a place or tap the map.");
+        pickPoint("pickup", { slug: PIN_SLUG, name: "My location", lat, lng, pinned: true });
+      },
+      () => show("We could not get your location. Type a place or tap the map."),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+    );
+  }
+
+  async function choose(which: Target, choice: Choice) {
+    if (choice.type === "place") return pickPoint(which, choice.point);
+    if (choice.type === "myloc") return useMyLocation();
+
+    // A suggestion from the map search: ask the map where it is.
+    wakeMap();
+    const label = choice.address ? `${choice.name}, ${choice.address}` : choice.name;
+    let position: { lat: number; lng: number } | null = null;
+    for (let i = 0; i < 40 && !mapApi.current?.ready; i++) {
+      if (mapFailed) break;
+      await new Promise((r) => window.setTimeout(r, 150)); // the map may still be loading
+    }
+    if (mapApi.current?.ready) position = await mapApi.current.locate(choice.eLoc, choice.name);
+
+    if (position) {
+      pickPoint(which, { slug: PIN_SLUG, name: choice.name, lat: position.lat, lng: position.lng, pinned: true });
+    } else if (which === "pickup") {
+      // Still useful: the rider reads the place in the pickup details.
+      setPoint("pickup", placePoint("khajuraho-town"));
+      setNote((prev) => (prev.trim() ? prev : label.slice(0, 200)));
+      show("We added that to your pickup details. A rider will confirm where to meet you.");
+    } else {
+      show("We could not place that on the map. Tap the map to drop a pin for the drop-off.");
+      setTarget("dropoff");
+    }
+  }
+
+  const routeText = needsDropoff
+    ? `${pickup?.name ?? ""} → ${dropoff?.name ?? ""}`
+    : `${TRIP_NAMES[trip] ?? "Tour"} from ${pickup?.name ?? ""}`;
 
   const scheduledAt = later && time ? `${time}:00+05:30` : null; // Khajuraho is on India time
-
-  function resetSteps() {
-    setStep("form");
-  }
 
   function toggleLater() {
     const next = !later;
@@ -134,13 +192,8 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
 
   function swap() {
     const a = pickup;
-    const b = dropoff;
-    const pa = pickupPin;
-    const pb = dropPin;
-    setPickup(b);
+    setPickup(dropoff);
     setDropoff(a);
-    setPickupPin(pb);
-    setDropPin(pa);
     resetSteps();
   }
 
@@ -148,12 +201,12 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
     e.preventDefault();
     if (!pickup) {
       show("Choose where we should pick you up");
-      pickupRef.current?.focus();
+      pickupInput.current?.focus();
       return;
     }
     if (needsDropoff && !dropoff) {
       show("Choose where you are going");
-      dropoffRef.current?.focus();
+      dropoffInput.current?.focus();
       return;
     }
     if (later && !time) {
@@ -166,6 +219,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
   }
 
   async function sendRequest() {
+    if (!pickup || (needsDropoff && !dropoff)) return resetSteps();
     if (name.trim().length < 2) {
       show("Add your name");
       nameRef.current?.focus();
@@ -185,14 +239,15 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
 
     setBusy(true);
     const supabase = getSupabase();
+    const drop = needsDropoff ? dropoff : null;
     const { data, error } = await supabase.rpc("request_ride_v2", {
       p_trip: trip,
-      p_pickup: pickup,
-      p_dropoff: needsDropoff ? dropoff : null,
-      p_pickup_lat: pickup === PIN_SLUG ? pickupPin?.lat : null,
-      p_pickup_lng: pickup === PIN_SLUG ? pickupPin?.lng : null,
-      p_dropoff_lat: needsDropoff && dropoff === PIN_SLUG ? dropPin?.lat : null,
-      p_dropoff_lng: needsDropoff && dropoff === PIN_SLUG ? dropPin?.lng : null,
+      p_pickup: pickup.slug,
+      p_dropoff: drop?.slug ?? null,
+      p_pickup_lat: pickup.pinned ? pickup.lat : null,
+      p_pickup_lng: pickup.pinned ? pickup.lng : null,
+      p_dropoff_lat: drop?.pinned ? drop.lat : null,
+      p_dropoff_lng: drop?.pinned ? drop.lng : null,
       p_rider_name: name,
       p_rider_phone: phone,
       p_passengers: Number(riders),
@@ -213,7 +268,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
     } catch {
       // private mode: tracking just asks for the phone number again
     }
-    setDone({ code: row.booking_code, phone: row.rider_phone, route, name: name.trim(), budget: budgetValue, riders: available });
+    setDone({ code: row.booking_code, phone: row.rider_phone, route: routeText, name: name.trim(), budget: budgetValue, riders: available });
     setStep("done");
     setBusy(false);
     window.setTimeout(() => document.getElementById(`${idPrefix}booking-done`)?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
@@ -233,18 +288,36 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
       setTrip(q.trip);
       setStep("form");
       show(`${TRIP_NAMES[q.trip]}: choose your pickup, then tap Find riders`);
-      pickupRef.current?.focus();
+      pickupInput.current?.focus();
       return;
     }
     setTrip("city-ride");
     setStep("form");
-    const from = !pickup || pickup === q.drop ? "khajuraho-town" : pickup;
+    const from = !pickup || pickup.slug === q.drop ? placePoint("khajuraho-town") : pickup;
     setPickup(from);
-    setDropoff(q.drop!);
+    setDropoff(placePoint(q.drop!));
+    wakeMap();
   }
+
+  const mapNode = (
+    <RideMap
+      active={mapActive}
+      layout={inHero ? "background" : "inline"}
+      pickup={pickup}
+      dropoff={dropoff}
+      needsDropoff={needsDropoff}
+      target={needsDropoff ? target : "pickup"}
+      onPick={pickPoint}
+      routeCoords={routeInfo?.coordinates ?? null}
+      apiRef={mapApi}
+      onStatus={onMapStatus}
+    />
+  );
 
   return (
     <div>
+      {inHero && hero.slot ? createPortal(mapNode, hero.slot) : null}
+
       <form
         id={id("ride-form")}
         onSubmit={findRiders}
@@ -269,91 +342,55 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
           </div>
         )}
 
-        <div className="overflow-hidden rounded-[17px] border border-line bg-[#fffefa]">
-          <div className="relative flex min-h-16 items-center gap-3.5 px-4 pb-2.5 pt-3 pr-14 focus-within:bg-[#fffbea]">
-            <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full border-[3px] border-ink" />
-            <div className="min-w-0 flex-1">
-              <label htmlFor={id("pickup")} className="label block">
-                Pickup
-              </label>
-              <select
-                id={id("pickup")}
-                ref={pickupRef}
-                value={pickup}
-                onChange={(e) => {
-                  setPickup(e.target.value);
-                  if (e.target.value !== PIN_SLUG) setPickupPin(null);
-                  resetSteps();
-                }}
-                className={`mt-0.5 w-full truncate bg-transparent text-[0.97rem] font-medium outline-none ${pickup ? "" : "text-[#8f9993] font-normal"}`}
-              >
-                <option value="" disabled>
-                  Where should we pick you up?
-                </option>
-                {pickupPin && <option value={PIN_SLUG}>{pickupPin.name === "My location" ? "My location (pin)" : `Pin: ${pickupPin.name}`}</option>}
-                {PLACE_GROUPS.map((g) => (
-                  <optgroup key={g} label={g}>
-                    {PLACES.filter((p) => p.group === g).map((p) => (
-                      <option key={p.slug} value={p.slug}>
-                        {p.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-            </div>
-            {needsDropoff && (
-              <button
-                type="button"
-                onClick={swap}
-                aria-label="Swap pickup and drop-off"
-                className="absolute right-3 top-1/2 grid h-9 w-9 -translate-y-1/2 place-items-center rounded-full border border-line bg-cream transition hover:rotate-180 hover:bg-sun"
-              >
-                <SwapIcon className="h-[17px] w-[17px]" />
-              </button>
-            )}
-          </div>
-
-          {needsDropoff && (
-            <div className="relative flex min-h-16 items-center gap-3.5 border-t border-line px-4 pb-2.5 pt-3 pr-14 focus-within:bg-[#fffbea]">
-              <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-[2px] border-[3px] border-sun" />
-              <div className="min-w-0 flex-1">
-                <label htmlFor={id("dropoff")} className="label block">
-                  Drop-off
-                </label>
-                <select
-                  id={id("dropoff")}
-                  ref={dropoffRef}
-                  value={dropoff}
-                  onChange={(e) => {
-                    setDropoff(e.target.value);
-                    if (e.target.value !== PIN_SLUG) setDropPin(null);
-                    resetSteps();
-                  }}
-                  className={`mt-0.5 w-full truncate bg-transparent text-[0.97rem] font-medium outline-none ${dropoff ? "" : "text-[#8f9993] font-normal"}`}
+        <div className="rounded-[17px] border border-line">
+          <PlaceInput
+            id={id("pickup")}
+            ref={pickupInput}
+            label="Pickup"
+            marker="pickup"
+            placeholder="Where should we pick you up?"
+            point={pickup}
+            excludeSlug={needsDropoff && dropoff && !dropoff.pinned ? dropoff.slug : undefined}
+            allowMyLocation
+            onFocusField={() => {
+              setTarget("pickup");
+              wakeMap();
+            }}
+            onClear={() => setPoint("pickup", null)}
+            onChoose={(c) => choose("pickup", c)}
+            trailing={
+              needsDropoff ? (
+                <button
+                  type="button"
+                  onClick={swap}
+                  aria-label="Swap pickup and drop-off"
+                  className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line bg-cream transition hover:rotate-180 hover:bg-sun"
                 >
-                  <option value="" disabled>
-                    Where to?
-                  </option>
-                  {dropPin && <option value={PIN_SLUG}>{`Pin: ${dropPin.name}`}</option>}
-                  {PLACE_GROUPS.map((g) => (
-                    <optgroup key={g} label={g}>
-                      {dropoffOptions
-                        .filter((p) => p.group === g)
-                        .map((p) => (
-                          <option key={p.slug} value={p.slug}>
-                            {p.name}
-                          </option>
-                        ))}
-                    </optgroup>
-                  ))}
-                </select>
-              </div>
-            </div>
+                  <SwapIcon className="h-[17px] w-[17px]" />
+                </button>
+              ) : undefined
+            }
+          />
+          {needsDropoff && (
+            <PlaceInput
+              id={id("dropoff")}
+              ref={dropoffInput}
+              label="Drop-off"
+              marker="dropoff"
+              placeholder="Where to?"
+              point={dropoff}
+              excludeSlug={pickup && !pickup.pinned ? pickup.slug : undefined}
+              onFocusField={() => {
+                setTarget("dropoff");
+                wakeMap();
+              }}
+              onClear={() => setPoint("dropoff", null)}
+              onChoose={(c) => choose("dropoff", c)}
+            />
           )}
 
           {later && (
-            <div className="grid gap-1.5 border-t border-dashed border-line px-4 pb-3 pt-3.5">
+            <div className="grid gap-1.5 rounded-b-[17px] border-t border-dashed border-line bg-[#fffefa] px-4 pb-3 pt-3.5">
               <label htmlFor={id("ride-time")} className="label">
                 When should we pick you up? (India time)
               </label>
@@ -373,34 +410,18 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
           )}
         </div>
 
-        <div className="px-1.5 pt-2.5">
-          <button
-            type="button"
-            onClick={() => setMapOpen((v) => !v)}
-            aria-expanded={mapOpen}
-            className="inline-flex items-center gap-2 text-[0.84rem] font-semibold text-green underline decoration-green/40 underline-offset-4"
-          >
-            <PinIcon className="h-4 w-4" /> {mapOpen ? "Hide map" : "Choose on map"}
-          </button>
-          {mapOpen && (
-            <MapPicker
-              pickup={pickupPoint}
-              dropoff={dropPoint}
-              needsDropoff={needsDropoff}
-              mode={needsDropoff ? mapMode : "pickup"}
-              onMode={setMapMode}
-              onPick={pickFromMap}
-              routeCoords={routeInfo?.coordinates ?? null}
-            />
-          )}
-          {routeInfo && needsDropoff && (
-            <p className="mt-2 text-[0.8rem] text-ink-soft">
-              {routeInfo.source === "road" ? "By road: " : "About "}
-              <strong className="text-ink">{routeInfo.distanceKm} km</strong> · about {routeInfo.durationMin} min
-              {routeInfo.source === "estimate" ? " (estimate)" : ""}
-            </p>
-          )}
-        </div>
+        {(routeInfo || mapFailed) && (
+          <div className="px-2 pt-2.5 text-[0.8rem] text-ink-soft">
+            {routeInfo && needsDropoff && (
+              <p>
+                {routeInfo.source === "road" ? "By road: " : "About "}
+                <strong className="text-ink">{routeInfo.distanceKm} km</strong> · about {routeInfo.durationMin} min
+                {routeInfo.source === "estimate" ? " (estimate)" : ""}
+              </p>
+            )}
+            {mapFailed && <p className="text-muted">The map could not load. You can still type places and send your request.</p>}
+          </div>
+        )}
 
         <div className="flex items-center gap-2.5 px-1.5 pb-0.5 pt-2.5">
           <button
@@ -424,7 +445,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
             <div className="mb-3.5 flex items-end justify-between gap-3">
               <div className="min-w-0">
                 <span className="label block">Your ride</span>
-                <strong className="font-display text-[1.05rem] leading-snug tracking-tight">{route}</strong>
+                <strong className="font-display text-[1.05rem] leading-snug tracking-tight">{routeText}</strong>
               </div>
               <span className="shrink-0 text-[0.82rem] text-ink-soft">{scheduledAt ? "Later" : "As soon as possible"}</span>
             </div>
@@ -519,6 +540,8 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
           </div>
         )}
       </form>
+
+      {!inHero && mapActive && mapNode}
 
       {showQuickPicks && (
         <div className="-mx-[18px] mt-4 flex gap-2 overflow-x-auto px-[18px] pb-2 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0" aria-label="Popular places">
