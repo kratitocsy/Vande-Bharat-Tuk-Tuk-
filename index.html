@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Indo Tuk Tuk — Ride the city, the Indo way</title>
+  <meta name="description" content="Book a tuk tuk, bike, or cab in seconds. Upfront fares, verified drivers, and rides across 28 Indian cities.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="Indo Tuk Tuk home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <path d="M7 24c0-5 4-8 9-8h8c5 0 9 3 9 8v4H7v-4Z" fill="#ffc53d"/>
+            <path d="M12 16c0-4 3-7 7-7h2c4 0 7 3 7 7H12Z" fill="#ffc53d"/>
+            <circle cx="13" cy="30" r="4" fill="#0b2f27"/>
+            <circle cx="27" cy="30" r="4" fill="#0b2f27"/>
+            <circle cx="13" cy="30" r="1.6" fill="#ffc53d"/>
+            <circle cx="27" cy="30" r="1.6" fill="#ffc53d"/>
+          </svg>
+        </span>
+        <span class="brand-name">Indo<strong>Tuk Tuk</strong></span>
+      </a>
+
+      <nav class="nav" id="nav" aria-label="Main navigation">
+        <a href="#rides">Ride</a>
+        <a href="#how">How it works</a>
+        <a href="#drive">Drive</a>
+        <a href="#safety">Safety</a>
+        <a href="#cities">Cities</a>
+        <a href="#faq">Help</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-ghost" href="#app">Log in</a>
+        <a class="btn btn-dark" href="#app">Sign up</a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow reveal">India's three-wheeled way to move</p>
+          <h1 class="reveal">Hop in.<br><span class="highlight">Go anywhere.</span></h1>
+          <p class="hero-sub reveal">Tuk tuks, bikes, and cabs at your fingertips. Upfront fares, verified drivers, and a city that finally feels close.</p>
+
+          <form class="ride-form reveal" id="ride-form" novalidate>
+            <div class="ride-fields">
+              <div class="field">
+                <span class="field-dot" aria-hidden="true"></span>
+                <label for="pickup">Pickup</label>
+                <input id="pickup" name="pickup" type="text" placeholder="Where are you now?" autocomplete="street-address">
+                <button class="swap-btn" type="button" id="swap-btn" aria-label="Swap pickup and drop-off">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v13M7 17l-3-3M7 17l3-3M17 20V7M17 7l-3 3M17 7l3 3"/></svg>
+                </button>
+              </div>
+              <div class="field">
+                <span class="field-square" aria-hidden="true"></span>
+                <label for="dropoff">Drop-off</label>
+                <input id="dropoff" name="dropoff" type="text" placeholder="Where to?" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="schedule-row" id="schedule-row" hidden>
+              <label for="ride-time">When should we pick you up?</label>
+              <input id="ride-time" name="ride-time" type="datetime-local">
+            </div>
+
+            <div class="ride-form-foot">
+              <button class="time-btn" type="button" id="schedule-toggle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                <span>Now</span>
+              </button>
+              <button class="btn btn-dark btn-wide" type="submit">
+                See prices
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </form>
+
+          <div class="hero-trust reveal">
+            <div class="avatars" aria-hidden="true">
+              <span class="avatar a1">AR</span>
+              <span class="avatar a2">SK</span>
+              <span class="avatar a3">MJ</span>
+              <span class="avatar a4">NP</span>
+            </div>
+            <p><strong>1.2 million riders</strong> already moving the Indo way</p>
+          </div>
+
+          <ul class="hero-stats reveal">
+            <li><strong>4.9</strong><span>Average rating</span></li>
+            <li><strong>28</strong><span>Cities live</span></li>
+            <li><strong>3 min</strong><span>Average pickup</span></li>
+          </ul>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="hero-card">
+            <div class="hero-pattern" aria-hidden="true"></div>
+            <svg class="tuk-art" viewBox="0 0 600 460" role="img" aria-label="Illustration of a yellow and green Indo Tuk Tuk auto rickshaw">
+              <defs>
+                <radialGradient id="sunG" cx=".5" cy=".5" r=".5">
+                  <stop offset="0" stop-color="#fff7dc"/>
+                  <stop offset="1" stop-color="#ffce5a"/>
+                </radialGradient>
+                <linearGradient id="bodyG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#12846a"/>
+                  <stop offset="1" stop-color="#075243"/>
+                </linearGradient>
+                <linearGradient id="roofG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#ffd45c"/>
+                  <stop offset="1" stop-color="#f6a900"/>
+                </linearGradient>
+                <linearGradient id="glassG" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#d9f4f2"/>
+                  <stop offset="1" stop-color="#8fd2ce"/>
+                </linearGradient>
+                <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#4a2f00" flood-opacity=".24"/>
+                </filter>
+              </defs>
+
+              <circle cx="438" cy="126" r="92" fill="url(#sunG)" opacity=".95"/>
+              <circle cx="438" cy="126" r="118" fill="none" stroke="#ffffff" stroke-opacity=".38" stroke-width="2" stroke-dasharray="3 10"/>
+
+              <g fill="none" stroke="#0b4a3c" stroke-width="3" stroke-linecap="round" opacity=".35">
+                <path d="M120 96q9-9 18 0 9-9 18 0"/>
+                <path d="M486 76q7-7 14 0 7-7 14 0"/>
+                <path d="M92 160q6-6 12 0 6-6 12 0"/>
+              </g>
+
+              <g fill="#0b4a3c" opacity=".10">
+                <rect x="36" y="300" width="38" height="92" rx="6"/>
+                <rect x="86" y="268" width="30" height="124" rx="6"/>
+                <rect x="128" y="316" width="44" height="76" rx="6"/>
+                <rect x="474" y="286" width="34" height="106" rx="6"/>
+                <rect x="520" y="308" width="46" height="84" rx="6"/>
+              </g>
+
+              <ellipse cx="315" cy="398" rx="238" ry="20" fill="#0b4a3c" opacity=".13"/>
+              <path d="M28 398h544" stroke="#0b4a3c" stroke-opacity=".18" stroke-width="4" stroke-linecap="round"/>
+
+              <g stroke="#0b4a3c" stroke-opacity=".18" stroke-width="5" stroke-linecap="round">
+                <path d="M74 244h42"/>
+                <path d="M58 270h58"/>
+                <path d="M84 296h34"/>
+              </g>
+
+              <g filter="url(#softShadow)">
+                <g fill="#0b4a3c" opacity=".22">
+                  <circle cx="198" cy="362" r="48"/>
+                  <circle cx="462" cy="362" r="48"/>
+                </g>
+
+                <path d="M150 340c-4-14 0-28 16-36l10-4c-7-34 8-68 38-80 14-6 22-14 28-26 8-16 22-24 42-26l86-2c28-2 50 14 58 42l24 60c12 6 26 14 36 26 8 12 12 28 12 40 2 10-6 14-18 14H166c-10 0-15-4-16-8Z" fill="url(#roofG)"/>
+
+                <path d="M188 290v-44c0-20 14-32 36-36l94-12 10 92Z" fill="#123b31"/>
+
+                <path d="M346 198l46-4 34 52 8 44h-94Z" fill="url(#glassG)" opacity=".95"/>
+                <path d="M354 204l30-3 20 30-40 4Z" fill="#ffffff" opacity=".32"/>
+                <path d="M408 268l18-5" stroke="#0e1714" stroke-width="3" stroke-linecap="round"/>
+
+                <g>
+                  <rect x="218" y="256" width="66" height="34" rx="8" fill="#1f4f42"/>
+                  <circle cx="302" cy="234" r="15" fill="#cf9563"/>
+                  <path d="M287 232c0-10 7-17 15-17s15 7 15 17c-4-4-9-6-15-6s-11 2-15 6Z" fill="#1b1b1f"/>
+                  <path d="M278 290c0-22 10-32 24-32s24 10 24 32Z" fill="#f4ecdd"/>
+                  <path d="M292 290l10-14 10 14Z" fill="#0b5c4a"/>
+                  <circle cx="248" cy="244" r="13" fill="#b97a4e"/>
+                  <path d="M235 242c0-9 6-15 13-15s13 6 13 15c-3-4-8-5-13-5s-10 1-13 5Z" fill="#1b1b1f"/>
+                  <path d="M232 252c0-4 3-7 7-8l-2 10Z" fill="#1b1b1f"/>
+                  <path d="M226 290c0-20 9-28 22-28s22 8 22 28Z" fill="#ff8a66"/>
+                </g>
+
+                <rect x="330" y="147" width="90" height="21" rx="10" fill="#0b2f27"/>
+                <text x="375" y="162" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="700" letter-spacing="2" fill="#ffc53d">TAXI</text>
+
+                <path d="M156 322c-2-12 6-22 22-26l298-8c14 3 22 13 24 27l2 14c2 10-6 14-18 14H168c-10 0-16-4-18-10Z" fill="url(#bodyG)"/>
+                <path d="M172 302c76-7 220-9 314-2" stroke="#ffc53d" stroke-width="4" stroke-linecap="round" opacity=".85"/>
+
+                <path d="M452 268c8 8 14 18 18 30l14 40h-34l-14-68Z" fill="#ffffff" opacity=".16"/>
+
+                <g>
+                  <circle cx="486" cy="308" r="11" fill="#fff3c4" stroke="#d99b00" stroke-width="3"/>
+                  <circle cx="486" cy="308" r="3.5" fill="#fffdf2"/>
+                </g>
+
+                <path d="M462 342h34c-2 5-7 6-12 6h-12c-6 0-9-2-10-6Z" fill="#0b3f34"/>
+
+                <text x="232" y="336" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="800" letter-spacing="4" fill="#ffd977">INDO</text>
+
+                <circle cx="452" cy="322" r="8" fill="#ffc53d"/>
+                <circle cx="452" cy="322" r="3" fill="#0b3f34"/>
+
+                <g>
+                  <circle cx="198" cy="364" r="40" fill="#15191b"/>
+                  <circle cx="198" cy="364" r="23" fill="#f5e9cf"/>
+                  <circle cx="198" cy="364" r="9" fill="#10241f"/>
+                  <g stroke="#10241f" stroke-width="3" stroke-linecap="round" opacity=".55">
+                    <path d="M198 353v5M198 370v5M187 364h5M204 364h5"/>
+                  </g>
+                </g>
+                <g>
+                  <circle cx="462" cy="364" r="40" fill="#15191b"/>
+                  <circle cx="462" cy="364" r="23" fill="#f5e9cf"/>
+                  <circle cx="462" cy="364" r="9" fill="#10241f"/>
+                  <g stroke="#10241f" stroke-width="3" stroke-linecap="round" opacity=".55">
+                    <path d="M462 353v5M462 370v5M451 364h5M468 364h5"/>
+                  </g>
+                </g>
+              </g>
+
+              <g transform="translate(520 158)">
+                <rect width="52" height="24" rx="12" fill="#0b2f27"/>
+                <circle cx="14" cy="12" r="4" fill="#6ee7b7"/>
+                <text x="24" y="16" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#f7f4ee">LIVE</text>
+              </g>
+            </svg>
+
+            <div class="float-card float-eta">
+              <span class="pulse" aria-hidden="true"></span>
+              <div>
+                <strong>Tuk Tuk nearby</strong>
+                <span>Arriving in 3 min</span>
+              </div>
+            </div>
+
+            <div class="float-card float-fare">
+              <div class="fare-amount">
+                <span>Upfront fare</span>
+                <strong>₹96</strong>
+              </div>
+              <div class="fare-route">
+                <strong>Indiranagar → MG Road</strong>
+                <span>4.2 km · 12 min</span>
+              </div>
+            </div>
+
+            <div class="float-card float-rating">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.1 6.3 7 1-5 4.9 1.2 6.9L12 17.8 5.7 21l1.2-6.9-5-4.9 7-1L12 2Z"/></svg>
+              <div><strong>4.9</strong><span>2,104 trips</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section rides" id="rides">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow">Pick your ride</p>
+            <h2>A ride for every kind of day.</h2>
+          </div>
+          <p class="section-sub">Short hop or long haul, there is an Indo ride for it. Fares are shown before you book, so there are no surprises at the end.</p>
+        </div>
+
+        <div class="tabs reveal" role="tablist" aria-label="Ride categories">
+          <button class="tab is-active" type="button" role="tab" aria-selected="true" data-tab="city">City rides</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="outstation">Outstation</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="rentals">Rentals</button>
+        </div>
+
+        <div class="ride-panels">
+          <div class="ride-grid is-active" data-panel="city" role="tabpanel">
+            <article class="ride-card reveal">
+              <div class="ride-top">
+                <span class="ride-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h16v4H4z"/><path d="M5 14c0-3 2-5 5-5h4c3 0 5 2 5 5"/><circle cx="7.5" cy="18.5" r="2"/><circle cx="16.5" cy="18.5" r="2"/><path d="M9 9V6h6v3"/></svg>
+                </span>
+                <span class="ride-tag">Most booked</span>
+              </div>
+              <h3>Indo Tuk Tuk</h3>
+              <p>The nimble city classic. Perfect for one to three riders and a quick dash across traffic.</p>
+              <ul class="ride-meta">
+                <li>1–3 seats</li>
+                <li>3 min away</li>
+              </ul>
+              <div class="ride-foot">
+                <span class="price">from ₹49<small>base fare</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Tuk Tuk">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card reveal">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-green">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16V8a2 2 0 0 1 2-2h9l5 6h2v4h-2"/><path d="M3 16h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/></svg>
+                </span>
+                <span class="ride-tag tag-alt">Roomier</span>
+              </div>
+              <h3>Tuk Tuk XL</h3>
+              <p>Extra legroom, extra bags, extra company. Built for the whole crew and a market haul.</p>
+              <ul class="ride-meta">
+                <li>1–5 seats</li>
+                <li>5 min away</li>
+              </ul>
+              <div class="ride-foot">
+                <span class="price">from ₹79<small>base fare</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Tuk Tuk XL">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card reveal">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-coral">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="m6 17 3-7h5l3 4h3"/><path d="m11 7 1-3h3"/></svg>
+                </span>
+                <span class="ride-tag tag-coral">Fastest</span>
+              </div>
+              <h3>Indo Bike</h3>
+              <p>Beat the traffic on two wheels. A quick, affordable solo ride with a helmet included.</p>
+              <ul class="ride-meta">
+                <li>1 rider</li>
+                <li>2 min away</li>
+              </ul>
+              <div class="ride-foot">
+                <span class="price">from ₹29<small>base fare</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Bike">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card reveal">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-sand">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15h16l-1.5-5.5A3 3 0 0 0 15.6 7H8.4a3 3 0 0 0-2.9 2.5L4 15Z"/><path d="M4 15v4h3v-2"/><path d="M20 15v4h-3v-2"/><path d="M7 10h10"/></svg>
+                </span>
+                <span class="ride-tag tag-sand">AC comfort</span>
+              </div>
+              <h3>Indo Cab</h3>
+              <p>Air-conditioned comfort for longer trips, rainy days, or when you just want a calmer ride.</p>
+              <ul class="ride-meta">
+                <li>1–4 seats</li>
+                <li>6 min away</li>
+              </ul>
+              <div class="ride-foot">
+                <span class="price">from ₹129<small>base fare</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Cab">Choose</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="ride-grid" data-panel="outstation" role="tabpanel" hidden>
+            <article class="ride-card">
+              <div class="ride-top">
+                <span class="ride-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M5 18 10 7l3 6 2-3 4 8"/><circle cx="17" cy="6" r="2"/></svg></span>
+                <span class="ride-tag">One way</span>
+              </div>
+              <h3>Indo Outstation</h3>
+              <p>City to city, on your schedule. Choose a one-way drop with a verified highway driver.</p>
+              <ul class="ride-meta"><li>1–4 seats</li><li>Book ahead</li></ul>
+              <div class="ride-foot">
+                <span class="price">from ₹14/km<small>outstation rate</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Outstation">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7h11l5 5v5"/><path d="M4 17h2"/><circle cx="9" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M11 17h4"/></svg></span>
+                <span class="ride-tag tag-alt">Round trip</span>
+              </div>
+              <h3>Weekend Escape</h3>
+              <p>A cab and driver for the whole weekend. Ideal for hill towns, temples, and coastal drives.</p>
+              <ul class="ride-meta"><li>Up to 6 seats</li><li>2–3 days</li></ul>
+              <div class="ride-foot">
+                <span class="price">from ₹3,499<small>per day</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Weekend Escape">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-coral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16 12 4l9 12"/><path d="M7 16h10"/><path d="M9 20h6"/></svg></span>
+                <span class="ride-tag tag-coral">Airport</span>
+              </div>
+              <h3>Airport Transfer</h3>
+              <p>Fixed fares, flight tracking, and a driver who waits if your flight runs late.</p>
+              <ul class="ride-meta"><li>1–4 seats</li><li>Meet and greet</li></ul>
+              <div class="ride-foot">
+                <span class="price">from ₹749<small>flat fare</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Airport Transfer">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-sand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+                <span class="ride-tag tag-sand">Groups</span>
+              </div>
+              <h3>Group Van</h3>
+              <p>One vehicle for the family, the wedding party, or the office offsite. Luggage space included.</p>
+              <ul class="ride-meta"><li>Up to 9 seats</li><li>Book ahead</li></ul>
+              <div class="ride-foot">
+                <span class="price">from ₹4,299<small>per day</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Group Van">Choose</button>
+              </div>
+            </article>
+          </div>
+
+          <div class="ride-grid" data-panel="rentals" role="tabpanel" hidden>
+            <article class="ride-card">
+              <div class="ride-top">
+                <span class="ride-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                <span class="ride-tag">1 hour</span>
+              </div>
+              <h3>Tuk Tuk by the Hour</h3>
+              <p>Keep a tuk tuk and driver for errands, meetings, or a slow evening of street food.</p>
+              <ul class="ride-meta"><li>1–3 seats</li><li>Driver included</li></ul>
+              <div class="ride-foot">
+                <span class="price">from ₹249<small>per hour</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Tuk Tuk by the Hour">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8h14M5 16h14"/><circle cx="12" cy="12" r="9"/></svg></span>
+                <span class="ride-tag tag-alt">Half day</span>
+              </div>
+              <h3>City in a Day</h3>
+              <p>Four hours, multiple stops, one flat price. A relaxed way to see the city without parking.</p>
+              <ul class="ride-meta"><li>4 hours</li><li>Multiple stops</li></ul>
+              <div class="ride-foot">
+                <span class="price">from ₹899<small>per booking</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="City in a Day">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-coral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v10H3z"/><path d="M7 12h4"/><circle cx="17" cy="12" r="2"/></svg></span>
+                <span class="ride-tag tag-coral">Self drive</span>
+              </div>
+              <h3>Indo Self Drive</h3>
+              <p>Take the wheel of a compact car or scooter. Insurance and roadside help included.</p>
+              <ul class="ride-meta"><li>1–5 seats</li><li>Fuel included</li></ul>
+              <div class="ride-foot">
+                <span class="price">from ₹1,299<small>per day</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Self Drive">Choose</button>
+              </div>
+            </article>
+
+            <article class="ride-card">
+              <div class="ride-top">
+                <span class="ride-icon ride-icon-sand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9l8-5 8 5v9"/><path d="M9 18v-5h6v5"/></svg></span>
+                <span class="ride-tag tag-sand">Monthly</span>
+              </div>
+              <h3>Monthly Commute</h3>
+              <p>A regular driver for your daily office run, with a fixed monthly rate and priority pickup.</p>
+              <ul class="ride-meta"><li>Weekdays</li><li>Fixed driver</li></ul>
+              <div class="ride-foot">
+                <span class="price">from ₹5,999<small>per month</small></span>
+                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Monthly Commute">Choose</button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section how" id="how">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow">How it works</p>
+            <h2>Booked in the time it takes to lock up.</h2>
+          </div>
+          <p class="section-sub">Three taps, one ride. Our app handles the rest, from matching you with a nearby driver to sharing the fare before you move.</p>
+        </div>
+
+        <div class="steps">
+          <article class="step reveal">
+            <span class="step-no">01</span>
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            </div>
+            <h3>Set your pickup</h3>
+            <p>Drop a pin, or type where you are. We will find the closest ride in seconds.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step-no">02</span>
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>
+            </div>
+            <h3>Pick your ride</h3>
+            <p>Compare fares for tuk tuk, bike, and cab. Choose the one that fits your day.</p>
+          </article>
+          <article class="step reveal">
+            <span class="step-no">03</span>
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/><circle cx="12" cy="12" r="9"/></svg>
+            </div>
+            <h3>Hop in and go</h3>
+            <p>Track the driver live, share the trip with family, and pay in the app at the end.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section why" id="why">
+      <div class="container">
+        <div class="section-head reveal">
+          <div>
+            <p class="eyebrow">Why Indo Tuk Tuk</p>
+            <h2>Small wheels. Big peace of mind.</h2>
+          </div>
+        </div>
+        <div class="why-grid">
+          <article class="why-card reveal">
+            <span class="why-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </span>
+            <h3>Upfront fares</h3>
+            <p>See exactly what you will pay before you book. No meters, no haggling, no detour surprises.</p>
+          </article>
+          <article class="why-card reveal">
+            <span class="why-icon why-icon-green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+            </span>
+            <h3>Live tracking</h3>
+            <p>Watch your driver approach on the map and share your route with someone you trust.</p>
+          </article>
+          <article class="why-card reveal">
+            <span class="why-icon why-icon-coral">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 3V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10Z"/><path d="M8 9h8M8 13h5"/></svg>
+            </span>
+            <h3>People, not bots</h3>
+            <p>Real support, day or night. Reach a human in the app whenever a ride needs a hand.</p>
+          </article>
+          <article class="why-card reveal">
+            <span class="why-icon why-icon-sand">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <h3>Verified drivers</h3>
+            <p>Every driver is background checked, licensed, and rated after every single trip.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section safety" id="safety">
+      <div class="container">
+        <div class="safety-card reveal">
+          <div class="safety-copy">
+            <p class="eyebrow eyebrow-light">Safety first, always</p>
+            <h2>Every ride has a safety net built in.</h2>
+            <p class="safety-sub">From the moment you book to the second you step out, Indo Tuk Tuk keeps you connected to help and to the people who matter.</p>
+            <ul class="safety-list">
+              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>Verified drivers and vehicles</li>
+              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>Live trip sharing with family</li>
+              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>In-app emergency button</li>
+              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>24/7 human support line</li>
+            </ul>
+            <a class="btn btn-light" href="#faq">Read our safety promise
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+
+          <div class="safety-visual" aria-hidden="true">
+            <div class="trip-card">
+              <div class="trip-card-top">
+                <span class="trip-live"><i></i>Live trip</span>
+                <span class="trip-id">#IT-4821</span>
+              </div>
+              <div class="trip-map">
+                <svg viewBox="0 0 320 190" fill="none">
+                  <path d="M10 160c50 0 60-60 110-60s60 44 100 44 60-30 90-30" stroke="#0b4a3c" stroke-opacity=".12" stroke-width="14" stroke-linecap="round"/>
+                  <path d="M18 148c44-4 54-52 102-52 46 0 54 38 96 38 34 0 52-22 86-24" stroke="#12846a" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
+                  <circle cx="20" cy="148" r="9" fill="#0b2f27"/>
+                  <circle cx="20" cy="148" r="3.5" fill="#ffc53d"/>
+                  <circle cx="302" cy="110" r="10" fill="#ffc53d"/>
+                  <path d="M302 106v5l3 2" stroke="#0b2f27" stroke-width="2" stroke-linecap="round"/>
+                  <g transform="translate(148 80)">
+                    <rect x="-22" y="-22" width="44" height="44" rx="14" fill="#fff" stroke="#e6dfd2"/>
+                    <path d="M-10 4c0-6 3-9 8-9h4c5 0 8 3 8 9v2H-10V4Z" fill="#ffc53d"/>
+                    <circle cx="-6" cy="8" r="3" fill="#0b2f27"/>
+                    <circle cx="6" cy="8" r="3" fill="#0b2f27"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="trip-driver">
+                <span class="avatar trip-avatar">RK</span>
+                <div>
+                  <strong>Ravi Kumar</strong>
+                  <span>Indo Tuk Tuk · KA 01 8842</span>
+                </div>
+                <span class="trip-rating">4.9 ★</span>
+              </div>
+              <div class="trip-share">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 3.9M15.4 6.6 8.6 10.5"/></svg>
+                <div><strong>Trip shared with Amma</strong><span>She can follow along live</span></div>
+                <span class="share-dot"></span>
+              </div>
+            </div>
+            <div class="safety-glow"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section partner" id="drive">
+      <div class="container">
+        <div class="partner-grid">
+          <article class="partner-card partner-drive reveal">
+            <p class="eyebrow">Drive with us</p>
+            <h2>Your wheels. Your hours. Your income.</h2>
+            <p>Join 40,000 drivers earning on their own schedule. Weekly payouts, fuel bonuses, and a support team that knows the road.</p>
+            <a class="btn btn-dark" href="#app">Start driving
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <div class="partner-art" aria-hidden="true">
+              <svg viewBox="0 0 240 150" fill="none">
+                <circle cx="170" cy="54" r="44" fill="#ffc53d" opacity=".5"/>
+                <path d="M30 108c0-16 8-24 22-24h78c12 0 20 8 22 22l4 14H30v-12Z" fill="#0b2f27"/>
+                <path d="M52 84c0-22 12-34 30-36l52-4c16-1 26 7 30 22l8 26H60l-8-8Z" fill="#ffc53d"/>
+                <rect x="66" y="58" width="44" height="18" rx="6" fill="#cdeee8"/>
+                <rect x="118" y="56" width="30" height="20" rx="6" fill="#cdeee8"/>
+                <circle cx="74" cy="110" r="17" fill="#15191b"/><circle cx="74" cy="110" r="8" fill="#f5e9cf"/>
+                <circle cx="176" cy="110" r="17" fill="#15191b"/><circle cx="176" cy="110" r="8" fill="#f5e9cf"/>
+                <path d="M196 50h26M202 64h30M210 78h22" stroke="#0b2f27" stroke-width="4" stroke-linecap="round" opacity=".35"/>
+              </svg>
+            </div>
+          </article>
+
+          <article class="partner-card partner-business reveal">
+            <p class="eyebrow">Indo for Business</p>
+            <h2>Move your team without the paperwork.</h2>
+            <p>One dashboard for travel, monthly billing, and ride policies. Built for teams from five to five thousand.</p>
+            <a class="btn btn-outline" href="#app">Talk to sales
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <div class="partner-art" aria-hidden="true">
+              <svg viewBox="0 0 240 150" fill="none">
+                <rect x="36" y="36" width="168" height="92" rx="12" fill="#fffdf7" stroke="#dcd3c3"/>
+                <rect x="36" y="36" width="168" height="24" rx="12" fill="#0b2f27"/>
+                <circle cx="52" cy="48" r="4" fill="#ffc53d"/><circle cx="66" cy="48" r="4" fill="#ffc53d" opacity=".55"/>
+                <rect x="54" y="74" width="64" height="8" rx="4" fill="#dcd3c3"/>
+                <rect x="54" y="90" width="100" height="8" rx="4" fill="#ece5d7"/>
+                <rect x="54" y="106" width="44" height="8" rx="4" fill="#ece5d7"/>
+                <rect x="150" y="74" width="36" height="40" rx="8" fill="#ffc53d"/>
+                <path d="M168 84v18M159 93h18" stroke="#0b2f27" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cities" id="cities">
+      <div class="container cities-inner">
+        <div class="cities-copy reveal">
+          <p class="eyebrow">On the road</p>
+          <h2>Live in 28 cities. Growing every month.</h2>
+          <p>From Bengaluru's lanes to Jaipur's pink streets, Indo Tuk Tuk is already part of the daily commute.</p>
+        </div>
+        <ul class="city-list reveal">
+          <li>Bengaluru</li>
+          <li>Mumbai</li>
+          <li>Delhi NCR</li>
+          <li>Hyderabad</li>
+          <li>Chennai</li>
+          <li>Pune</li>
+          <li>Jaipur</li>
+          <li>Kochi</li>
+          <li>Goa</li>
+          <li>Udaipur</li>
+          <li>Mysuru</li>
+          <li>Ahmedabad</li>
+          <li>Kolkata</li>
+          <li>Lucknow</li>
+          <li>Varanasi</li>
+          <li>Indore</li>
+          <li>Coimbatore</li>
+          <li>Bhopal</li>
+          <li>Surat</li>
+          <li>Nagpur</li>
+          <li>Chandigarh</li>
+          <li>Jodhpur</li>
+          <li>Patna</li>
+          <li>Ranchi</li>
+          <li>Guwahati</li>
+          <li>Visakhapatnam</li>
+          <li>Vijayawada</li>
+          <li>Thiruvananthapuram</li>
+        </ul>
+        <p class="cities-note reveal">Not in your city yet? <a href="#app">Tell us where to go next</a>.</p>
+      </div>
+    </section>
+
+    <section class="section app" id="app">
+      <div class="container">
+        <div class="app-card reveal">
+          <div class="app-copy">
+            <p class="eyebrow eyebrow-light">Get the app</p>
+            <h2>The whole city, in your pocket.</h2>
+            <p>Book, track, and pay in a few taps. Save favourite places, split fares with friends, and keep your receipts in one place.</p>
+            <div class="store-buttons">
+              <a class="store-btn" href="#app">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 12.6c0-2 1.6-3 1.7-3.1-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.3 2-1.4 2.4-.4 6 1 8 .7 1 1.5 2.1 2.6 2 1-.1 1.4-.7 2.6-.7s1.6.7 2.7.7c1.1 0 1.8-1 2.5-2 .8-1.1 1.1-2.2 1.1-2.3 0 0-2.4-1-2.4-3ZM14.4 6.5c.5-.7.9-1.6.8-2.5-.8 0-1.8.5-2.4 1.2-.5.6-1 1.6-.8 2.5.9.1 1.8-.5 2.4-1.2Z"/></svg>
+                <span><small>Download on the</small>App Store</span>
+              </a>
+              <a class="store-btn" href="#app">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3.2c-.3.3-.5.8-.5 1.4v14.8c0 .6.2 1.1.5 1.4l8.1-8.8L4 3.2Zm9.4 7.5 2.6-2.8-8.2-4.7c-.4-.2-.8-.3-1.1-.2l6.7 7.7Zm0 2.6-6.7 7.7c.3.1.7 0 1.1-.2l8.2-4.7-2.6-2.8Zm2 1.1 3.3-1.9c.8-.5.8-1.5 0-1.9l-3.3-1.9-2.8 2.9 2.8 2.8Z"/></svg>
+                <span><small>Get it on</small>Google Play</span>
+              </a>
+            </div>
+            <div class="app-rating">
+              <span>4.9 ★</span>
+              <span>1.2M+ downloads</span>
+              <span>Free to download</span>
+            </div>
+          </div>
+
+          <div class="app-visual" aria-hidden="true">
+            <div class="phone">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="phone-status">
+                  <span>9:41</span>
+                  <span class="status-icons"><i></i><i></i><i></i></span>
+                </div>
+                <div class="phone-map">
+                  <svg viewBox="0 0 300 330" fill="none" preserveAspectRatio="xMidYMid slice">
+                    <rect width="300" height="330" fill="#eaf1e7"/>
+                    <g stroke="#d3e2d4" stroke-width="10">
+                      <path d="M-20 70h340M-20 180h340M-20 270h340"/>
+                      <path d="M60 -20v380M170 -20v380M260 -20v380"/>
+                    </g>
+                    <path d="M-10 150h320" stroke="#c5d9c8" stroke-width="22"/>
+                    <g fill="#cfe0c9">
+                      <rect x="80" y="90" width="70" height="70" rx="8"/>
+                      <rect x="190" y="200" width="52" height="52" rx="8"/>
+                      <rect x="20" y="210" width="30" height="40" rx="6"/>
+                    </g>
+                    <path d="M96 262c22-30 46-44 80-46 28-2 48-16 62-44" stroke="#12846a" stroke-width="6" stroke-linecap="round"/>
+                    <circle cx="96" cy="262" r="10" fill="#0b2f27" stroke="#fff" stroke-width="3"/>
+                    <g transform="translate(230 160)">
+                      <circle r="20" fill="#fff"/>
+                      <path d="M-9 3c0-6 3-9 8-9h3c5 0 8 3 8 9v2H-9V3Z" fill="#ffc53d"/>
+                      <circle cx="-5" cy="7" r="3" fill="#0b2f27"/><circle cx="6" cy="7" r="3" fill="#0b2f27"/>
+                    </g>
+                    <circle cx="230" cy="160" r="30" fill="none" stroke="#12846a" stroke-width="2" opacity=".4"/>
+                  </svg>
+                  <div class="map-chip">
+                    <span class="pulse"></span> Driver 2 min away
+                  </div>
+                </div>
+                <div class="phone-sheet">
+                  <span class="sheet-grab"></span>
+                  <div class="sheet-driver">
+                    <span class="avatar sheet-avatar">RK</span>
+                    <div>
+                      <strong>Ravi Kumar</strong>
+                      <span>Tuk Tuk · KA 01 8842</span>
+                    </div>
+                    <span class="sheet-star">4.9 ★</span>
+                  </div>
+                  <div class="sheet-route">
+                    <div class="sheet-point"><i></i><span>Indiranagar, Bengaluru</span></div>
+                    <div class="sheet-line"></div>
+                    <div class="sheet-point"><b></b><span>MG Road, Bengaluru</span></div>
+                  </div>
+                  <div class="sheet-fare">
+                    <span>Upfront fare</span>
+                    <strong>₹96</strong>
+                  </div>
+                  <button class="btn btn-dark btn-wide" type="button" data-toast="Ride tracking opened">Track ride</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section faq" id="faq">
+      <div class="container faq-grid">
+        <div class="faq-copy reveal">
+          <p class="eyebrow">Questions</p>
+          <h2>Before you hop in.</h2>
+          <p>Can't find what you need? Our support team is awake in every city, every hour.</p>
+          <a class="btn btn-outline" href="#app">Visit help centre
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        <div class="faq-list reveal">
+          <details class="faq-item" open>
+            <summary>How is my fare calculated?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Your fare is based on distance, time, and current demand. We show the full amount before you book, and that is what you pay. No meter surprises, no cash negotiations.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can I pay with cash?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Yes. Choose cash when you book, or link a card, UPI, or wallet in the app. You can switch your payment method right up until the trip ends.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What safety checks do drivers go through?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Every driver completes an identity check, a driving licence verification, and a background check before their first trip. Vehicles are inspected at onboarding and rated by riders after every ride.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can I book a ride for someone else?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Yes. Add a guest rider in the app, and they will receive the driver details and live tracking link. You can follow the trip from your own phone as well.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What happens if my driver is late?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>You will see live arrival updates. If pickup takes longer than the promise window, we will credit a small wait voucher to your account automatically.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="signup">
+      <div class="container">
+        <div class="signup-card reveal">
+          <div>
+            <p class="eyebrow">Ready when you are</p>
+            <h2>Your next ride is three minutes away.</h2>
+          </div>
+          <form class="signup-form" id="signup-form" novalidate>
+            <label class="sr-only" for="email">Email address</label>
+            <input id="email" name="email" type="email" placeholder="Enter your email" required>
+            <button class="btn btn-dark" type="submit">Get the app link</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a class="brand brand-light" href="#top" aria-label="Indo Tuk Tuk home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none">
+                <path d="M7 24c0-5 4-8 9-8h8c5 0 9 3 9 8v4H7v-4Z" fill="#ffc53d"/>
+                <path d="M12 16c0-4 3-7 7-7h2c4 0 7 3 7 7H12Z" fill="#ffc53d"/>
+                <circle cx="13" cy="30" r="4" fill="#ffc53d"/>
+                <circle cx="27" cy="30" r="4" fill="#ffc53d"/>
+                <circle cx="13" cy="30" r="1.6" fill="#0b0f0d"/>
+                <circle cx="27" cy="30" r="1.6" fill="#0b0f0d"/>
+              </svg>
+            </span>
+            <span class="brand-name">Indo<strong>Tuk Tuk</strong></span>
+          </a>
+          <p>Moving India, three wheels at a time.</p>
+          <div class="footer-social">
+            <a href="#top" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#top" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-6.6 7.6L22 21h-6l-4.7-6.1L5.9 21H3l7.1-8.1L2.5 3h6.2l4.2 5.6L17.5 3Zm-1.1 16h1.7L7.6 4.7H5.8L16.4 19Z"/></svg></a>
+            <a href="#top" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 3.5A2 2 0 1 0 4.5 7.5 2 2 0 0 0 4.5 3.5ZM3 9h3v11H3V9Zm5 0h2.9v1.5c.4-.8 1.5-1.8 3.3-1.8 3 0 3.8 1.9 3.8 4.8V20h-3v-5.6c0-1.5-.5-2.4-1.8-2.4-1.1 0-1.8.7-2.1 1.5-.1.3-.1.7-.1 1V20H8V9Z"/></svg></a>
+            <a href="#top" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2c-.2-.9-.9-1.6-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4c-.9.2-1.6.9-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8c.2.9.9 1.6 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8ZM10 15.2V8.8L15.5 12 10 15.2Z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h3>Ride</h3>
+          <a href="#rides">Tuk Tuk</a>
+          <a href="#rides">Tuk Tuk XL</a>
+          <a href="#rides">Indo Bike</a>
+          <a href="#rides">Indo Cab</a>
+          <a href="#rides">Airport transfers</a>
+        </div>
+        <div class="footer-col">
+          <h3>Company</h3>
+          <a href="#why">About us</a>
+          <a href="#cities">Cities</a>
+          <a href="#drive">Careers</a>
+          <a href="#app">Newsroom</a>
+          <a href="#app">Investors</a>
+        </div>
+        <div class="footer-col">
+          <h3>Support</h3>
+          <a href="#faq">Help centre</a>
+          <a href="#safety">Safety</a>
+          <a href="#faq">Fare estimates</a>
+          <a href="#app">Lost and found</a>
+          <a href="#app">Contact us</a>
+        </div>
+        <div class="footer-col">
+          <h3>Partner</h3>
+          <a href="#drive">Drive with us</a>
+          <a href="#drive">Indo for Business</a>
+          <a href="#drive">Fleet partners</a>
+          <a href="#app">Developer API</a>
+          <a href="#app">Press kit</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; <span id="year">2026</span> Indo Tuk Tuk Mobility Pvt. Ltd. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#top">Privacy</a>
+          <a href="#top">Terms</a>
+          <a href="#top">Cookies</a>
+          <button class="lang-btn" type="button" data-toast="Language switching is coming soon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg>
+            English (India)
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
