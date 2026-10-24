@@ -1,26 +1,16 @@
--- Name-your-price booking: riders choose their own offer; no fixed fares.
--- Removes the old fare calculation, adds a riders (drivers) table, and a new create_booking.
+-- Ride requests without fixed fares: riders are shown to the customer, call them,
+-- and agree the price by phone. The customer's budget is optional.
+--
+-- Non-destructive: nothing is dropped. The old fare functions are simply no longer
+-- callable from the website, and trips' old price columns are left unused.
 
--- Old pricing functions
-drop function if exists public.get_quote(text, text, text);
-drop function if exists public.create_booking(text, text, text, text, text, integer, timestamptz, text);
-drop function if exists public.price_trip(text, text, text);
-drop function if exists public.trip_fare(public.trips, numeric);
-
--- Trips no longer carry prices
-alter table public.trips
-  drop column base_fare,
-  drop column per_km,
-  drop column min_fare,
-  drop column pricing_model,
-  drop column price_unit;
-
--- Bookings store the rider's offer
-alter table public.bookings rename column fare to offered_fare;
+-- bookings.fare now means the price agreed after the call (filled in by the team).
+alter table public.bookings alter column fare drop not null;
 alter table public.bookings
-  add constraint bookings_offered_fare_range check (offered_fare between 10 and 20000);
+  add column budget integer check (budget is null or budget between 10 and 20000);
 
--- Riders who can take bookings
+-- Riders who can take bookings -------------------------------------------------
+
 create table public.drivers (
   id             uuid primary key default gen_random_uuid(),
   name           text not null check (char_length(name) between 2 and 80),
@@ -36,7 +26,7 @@ alter table public.drivers enable row level security;
 insert into public.drivers (name, phone)
 values ('Khajuraho Tuk Tuk rider', '+919893413847');
 
--- Public RPCs ----------------------------------------------------------------
+-- Public functions ---------------------------------------------------------------
 
 create function public.get_available_riders()
 returns table (name text, phone text, vehicle_number text)
@@ -51,18 +41,18 @@ as $$
   order by d.created_at;
 $$;
 
-create function public.create_booking(
+create function public.request_ride(
   p_trip         text,
   p_pickup       text,
   p_dropoff      text,
-  p_offer        integer,
   p_rider_name   text,
   p_rider_phone  text,
   p_passengers   integer default 1,
   p_scheduled_at timestamptz default null,
-  p_pickup_note  text default null
+  p_pickup_note  text default null,
+  p_budget       integer default null
 )
-returns table (booking_code text, trip_name text, offered_fare integer, scheduled_at timestamptz, rider_phone text)
+returns table (booking_code text, trip_name text, scheduled_at timestamptz, rider_phone text)
 language plpgsql
 volatile
 security definer
@@ -99,14 +89,14 @@ begin
     v_km := public.road_distance_km(v_pickup, v_dropoff);
   end if;
 
-  if p_offer is null or p_offer not between 10 and 20000 then
-    raise exception 'Enter your price between ₹10 and ₹20,000' using errcode = '22023';
+  if p_budget is not null and p_budget not between 10 and 20000 then
+    raise exception 'Enter a budget between ₹10 and ₹20,000, or leave it empty' using errcode = '22023';
   end if;
   if v_name is null or char_length(v_name) < 2 or char_length(v_name) > 80 then
     raise exception 'Add your name' using errcode = '22023';
   end if;
   if v_phone !~ '^\+?[0-9]{8,15}$' then
-    raise exception 'Add a phone number we can call or WhatsApp' using errcode = '22023';
+    raise exception 'Add a phone number a rider can call or WhatsApp' using errcode = '22023';
   end if;
   if p_passengers is null or p_passengers not between 1 and 3 then
     raise exception 'An auto fits up to 3 passengers' using errcode = '22023';
@@ -130,15 +120,16 @@ begin
   end loop;
 
   insert into public.bookings (booking_code, trip_id, pickup_id, dropoff_id, pickup_note, scheduled_at,
-                               passengers, rider_name, rider_phone, distance_km, offered_fare)
+                               passengers, rider_name, rider_phone, distance_km, budget)
   values (v_code, v_trip.id, v_pickup.id, v_dropoff.id, v_note, p_scheduled_at,
-          p_passengers, v_name, v_phone, v_km, p_offer);
+          p_passengers, v_name, v_phone, v_km, p_budget);
 
-  return query select v_code, v_trip.name, p_offer, p_scheduled_at, v_phone;
+  return query select v_code, v_trip.name, p_scheduled_at, v_phone;
 end;
 $$;
 
+-- Permissions: the website can call only these three; the old fare functions are shut off.
 revoke execute on all functions in schema public from public, anon, authenticated;
 grant execute on function public.get_available_riders() to anon, authenticated;
-grant execute on function public.create_booking(text, text, text, integer, text, text, integer, timestamptz, text) to anon, authenticated;
+grant execute on function public.request_ride(text, text, text, text, text, integer, timestamptz, text, integer) to anon, authenticated;
 grant execute on function public.submit_partner_enquiry(text, text, text, text) to anon, authenticated;

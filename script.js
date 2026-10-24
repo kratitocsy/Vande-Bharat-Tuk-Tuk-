@@ -89,10 +89,6 @@
     });
   }
 
-  function rupees(n) {
-    return "₹" + Number(n).toLocaleString("en-IN");
-  }
-
   function setBusy(button, busy) {
     if (!button) return;
     button.setAttribute("aria-busy", String(busy));
@@ -136,6 +132,8 @@
   });
 
   // --- Booking form -----------------------------------------------------
+  const FALLBACK_RIDER = { name: "Khajuraho Tuk Tuk rider", phone: "+919893413847" };
+
   const form = document.getElementById("ride-form");
   const pickup = document.getElementById("pickup");
   const dropoff = document.getElementById("dropoff");
@@ -146,10 +144,11 @@
   const rideTime = document.getElementById("ride-time");
   const quoteBtn = document.getElementById("quote-btn");
   const quotePanel = document.getElementById("quote-panel");
-  const quoteFare = document.getElementById("quote-fare");
+  const quoteRoute = document.getElementById("quote-route");
   const quoteDetail = document.getElementById("quote-detail");
   const confirmBtn = document.getElementById("confirm-btn");
   const bookingDone = document.getElementById("booking-done");
+  const riderList = document.getElementById("rider-list");
   const tripBanner = document.getElementById("trip-banner");
   const tripBannerName = document.getElementById("trip-banner-name");
   const tripClear = document.getElementById("trip-clear");
@@ -165,14 +164,18 @@
   };
 
   let trip = "city-ride";
-  let lastQuote = null;
-  let lastQuoteKey = "";
+  let panelKey = "";
 
   const places = pickup
     ? Array.prototype.slice.call(pickup.querySelectorAll("option[value]:not([value=''])")).map(function (o) {
         return { slug: o.value, name: o.textContent };
       })
     : [];
+
+  function placeName(slug) {
+    const match = places.filter(function (p) { return p.slug === slug; })[0];
+    return match ? match.name : "";
+  }
 
   function fillDropoff() {
     if (!dropoff || !pickup) return;
@@ -193,9 +196,8 @@
     dropoff.value = Array.prototype.some.call(dropoff.options, function (o) { return o.value === keep; }) ? keep : "";
   }
 
-  function resetQuote() {
-    lastQuote = null;
-    lastQuoteKey = "";
+  function resetPanels() {
+    panelKey = "";
     if (quotePanel) quotePanel.setAttribute("hidden", "");
     if (quoteBtn) quoteBtn.hidden = false;
     if (bookingDone) bookingDone.setAttribute("hidden", "");
@@ -210,17 +212,17 @@
       tripBanner.hidden = needsDropoff;
       if (tripBannerName) tripBannerName.textContent = TRIP_NAMES[slug] || "Tour";
     }
-    resetQuote();
+    resetPanels();
   }
 
   fillDropoff();
   setTrip("city-ride");
 
   if (pickup) {
-    pickup.addEventListener("change", function () { fillDropoff(); resetQuote(); });
+    pickup.addEventListener("change", function () { fillDropoff(); resetPanels(); });
   }
   if (dropoff) {
-    dropoff.addEventListener("change", resetQuote);
+    dropoff.addEventListener("change", resetPanels);
   }
 
   if (swapBtn && pickup && dropoff) {
@@ -230,7 +232,7 @@
       pickup.value = b || "";
       fillDropoff();
       dropoff.value = a || "";
-      resetQuote();
+      resetPanels();
     });
   }
 
@@ -261,12 +263,12 @@
       } else if (rideTime) {
         rideTime.value = "";
       }
-      resetQuote();
+      resetPanels();
     });
   }
 
   if (rideTime) {
-    rideTime.addEventListener("change", resetQuote);
+    rideTime.addEventListener("change", resetPanels);
   }
 
   // The time box shows the visitor's own clock. Khajuraho is on India time (UTC+05:30),
@@ -299,48 +301,87 @@
     return true;
   }
 
+  function routeText() {
+    return trip === "city-ride"
+      ? placeName(pickup.value) + " → " + placeName(dropoff.value)
+      : (TRIP_NAMES[trip] || "Tour") + " from " + placeName(pickup.value);
+  }
+
+  function formatPhone(phone) {
+    const digits = String(phone).replace(/\D/g, "");
+    const local = digits.length === 12 && digits.indexOf("91") === 0 ? digits.slice(2) : digits;
+    return local.length === 10 ? local.slice(0, 5) + " " + local.slice(5) : "+" + digits;
+  }
+
+  function renderRiders(riders, details) {
+    riderList.innerHTML = "";
+    riders.forEach(function (rider) {
+      const digits = String(rider.phone).replace(/\D/g, "");
+      const message = "Hi, I'm " + details.name + ". Request " + details.code + ": " + details.route +
+        (details.budget ? ". My budget is ₹" + details.budget : "") +
+        ". Please call me on " + details.phone + " to agree the price.";
+
+      const item = document.createElement("li");
+      item.className = "rider-item";
+
+      const info = document.createElement("div");
+      info.className = "rider-info";
+      const name = document.createElement("strong");
+      name.textContent = rider.name;
+      const number = document.createElement("span");
+      number.textContent = formatPhone(rider.phone) + (rider.vehicle_number ? " · " + rider.vehicle_number : "");
+      info.appendChild(name);
+      info.appendChild(number);
+
+      const actions = document.createElement("div");
+      actions.className = "rider-actions";
+      const call = document.createElement("a");
+      call.className = "btn btn-dark btn-sm";
+      call.href = "tel:+" + digits;
+      call.textContent = "Call";
+      const wa = document.createElement("a");
+      wa.className = "btn btn-outline btn-sm";
+      wa.href = "https://wa.me/" + digits + "?text=" + encodeURIComponent(message);
+      wa.target = "_blank";
+      wa.rel = "noopener";
+      wa.textContent = "WhatsApp";
+      actions.appendChild(call);
+      actions.appendChild(wa);
+
+      item.appendChild(info);
+      item.appendChild(actions);
+      riderList.appendChild(item);
+    });
+  }
+
+  // Step 1: check the route, then ask for the customer's contact details.
   if (form) {
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       if (!validateRoute()) return;
 
-      const key = currentKey();
-      setBusy(quoteBtn, true);
-      rpc("get_quote", {
-        p_trip: trip,
-        p_pickup: pickup.value,
-        p_dropoff: trip === "city-ride" ? dropoff.value : null
-      }).then(function (rows) {
-        const q = rows && rows[0];
-        if (!q) throw new Error("We couldn't price that trip. Please try again.");
-        lastQuote = q;
-        lastQuoteKey = key;
-        quoteFare.textContent = rupees(q.fare);
-        quoteDetail.textContent = q.distance_km
-          ? q.trip_name + " · about " + q.distance_km + " km"
-          : q.trip_name + " · " + q.price_unit;
-        quotePanel.removeAttribute("hidden");
-        quoteBtn.hidden = true;
-        const name = document.getElementById("rider-name");
-        if (name && !name.value) name.focus({ preventScroll: true });
-      }).catch(function (error) {
-        showToast(error.message);
-      }).then(function () {
-        setBusy(quoteBtn, false);
-      });
+      panelKey = currentKey();
+      quoteRoute.textContent = routeText();
+      quoteDetail.textContent = scheduledAt() ? "Later" : "As soon as possible";
+      quotePanel.removeAttribute("hidden");
+      quoteBtn.hidden = true;
+      const name = document.getElementById("rider-name");
+      if (name && !name.value) name.focus({ preventScroll: true });
     });
   }
 
+  // Step 2: save the request and show the riders who are available.
   if (confirmBtn) {
     confirmBtn.addEventListener("click", function () {
       const name = document.getElementById("rider-name");
       const phone = document.getElementById("rider-phone");
       const riders = document.getElementById("passengers");
       const note = document.getElementById("pickup-note");
+      const budget = document.getElementById("budget");
 
-      if (!lastQuote || lastQuoteKey !== currentKey()) {
-        showToast("Your trip changed. Tap See fare again.");
-        resetQuote();
+      if (panelKey !== currentKey()) {
+        showToast("Your trip changed. Tap Find riders again.");
+        resetPanels();
         return;
       }
       if (!name.value.trim() || name.value.trim().length < 2) {
@@ -349,13 +390,20 @@
         return;
       }
       if (phone.value.replace(/\D/g, "").length < 10) {
-        showToast("Add a phone number we can call or WhatsApp");
+        showToast("Add a phone number a rider can call or WhatsApp");
         phone.focus();
         return;
       }
+      const budgetValue = budget.value.trim() ? Number(budget.value) : null;
+      if (budgetValue !== null && (!(budgetValue >= 10) || budgetValue > 20000)) {
+        showToast("Budget should be between ₹10 and ₹20,000, or leave it empty");
+        budget.focus();
+        return;
+      }
 
+      const route = routeText();
       setBusy(confirmBtn, true);
-      rpc("create_booking", {
+      rpc("request_ride", {
         p_trip: trip,
         p_pickup: pickup.value,
         p_dropoff: trip === "city-ride" ? dropoff.value : null,
@@ -363,18 +411,31 @@
         p_rider_phone: phone.value,
         p_passengers: Number(riders.value),
         p_scheduled_at: scheduledAt(),
-        p_pickup_note: note.value || null
+        p_pickup_note: note.value || null,
+        p_budget: budgetValue
       }).then(function (rows) {
         const b = rows && rows[0];
-        if (!b) throw new Error("We couldn't save your booking. Please try again.");
+        if (!b) throw new Error("We couldn't save your request. Please try again.");
+        return rpc("get_available_riders", {}).catch(function () { return []; }).then(function (list) {
+          return { booking: b, riders: list && list.length ? list : [FALLBACK_RIDER] };
+        });
+      }).then(function (result) {
+        const b = result.booking;
         document.getElementById("done-code").textContent = b.booking_code;
         document.getElementById("done-text").textContent =
-          b.trip_name + " · " + rupees(b.fare) + ". We'll call or WhatsApp " + b.rider_phone +
-          " shortly to confirm your driver. Pay cash or UPI at the end of the ride.";
+          "These riders are available. Call or WhatsApp one now, or wait and a rider will call " +
+          formatPhone(b.rider_phone) + " to agree the price.";
+        renderRiders(result.riders, {
+          name: name.value.trim(),
+          phone: b.rider_phone,
+          code: b.booking_code,
+          route: route,
+          budget: budgetValue
+        });
         quotePanel.setAttribute("hidden", "");
         bookingDone.removeAttribute("hidden");
         bookingDone.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        lastQuote = null;
+        panelKey = "";
       }).catch(function (error) {
         showToast(error.message);
       }).then(function () {
@@ -386,13 +447,12 @@
   const bookAnother = document.getElementById("book-another");
   if (bookAnother) {
     bookAnother.addEventListener("click", function () {
-      resetQuote();
-      if (quoteBtn) quoteBtn.hidden = false;
+      resetPanels();
       document.getElementById("book").scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
 
-  // "Book" buttons on the ride and tour cards fill the form above.
+  // "Find a rider" buttons on the ride and tour cards fill the form above.
   document.querySelectorAll(".choose-btn").forEach(function (button) {
     button.addEventListener("click", function () {
       setTrip(button.dataset.trip);
@@ -407,7 +467,7 @@
       const card = button.closest(".ride-card");
       if (card) card.classList.add("is-selected");
       document.getElementById("book").scrollIntoView({ behavior: "smooth", block: "start" });
-      showToast((TRIP_NAMES[button.dataset.trip] || "Ride") + ": choose your pickup, then tap See fare");
+      showToast((TRIP_NAMES[button.dataset.trip] || "Ride") + ": choose your pickup, then tap Find riders");
       if (pickup && !pickup.value) {
         setTimeout(function () { pickup.focus({ preventScroll: true }); }, 500);
       }
@@ -419,35 +479,19 @@
     chip.addEventListener("click", function () {
       if (chip.dataset.trip) {
         setTrip(chip.dataset.trip);
-        showToast((TRIP_NAMES[chip.dataset.trip] || "Trip") + ": choose your pickup, then tap See fare");
+        showToast((TRIP_NAMES[chip.dataset.trip] || "Trip") + ": choose your pickup, then tap Find riders");
         if (pickup && !pickup.value) pickup.focus();
         return;
       }
       setTrip("city-ride");
       if (pickup && dropoff) {
-        if (!pickup.value) pickup.value = "khajuraho-town";
-        if (pickup.value === chip.dataset.drop) pickup.value = "khajuraho-town";
+        if (!pickup.value || pickup.value === chip.dataset.drop) pickup.value = "khajuraho-town";
         fillDropoff();
         dropoff.value = chip.dataset.drop;
-        resetQuote();
+        resetPanels();
         if (quoteBtn) quoteBtn.focus();
       }
     });
-  });
-
-  // Live fares for the airport and station cards; the printed price stays if this fails.
-  document.querySelectorAll("[data-quote-from]").forEach(function (el) {
-    rpc("get_quote", {
-      p_trip: "city-ride",
-      p_pickup: el.dataset.quoteFrom,
-      p_dropoff: el.dataset.quoteTo
-    }).then(function (rows) {
-      if (rows && rows[0]) {
-        const small = el.querySelector("small");
-        el.firstChild.nodeValue = "about " + rupees(rows[0].fare);
-        if (small) small.textContent = "from town";
-      }
-    }).catch(function () {});
   });
 
   // --- Partner form -----------------------------------------------------
