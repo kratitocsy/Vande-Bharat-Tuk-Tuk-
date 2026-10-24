@@ -84,6 +84,7 @@ export function MusicPlayer() {
   const start = useCallback(async () => {
     const audio = ensureAudio();
     try {
+      audio.muted = false;
       await audio.play();
       setPlaying(true);
       fadeTo(VOLUME, 1800);
@@ -92,6 +93,30 @@ export function MusicPlayer() {
       return false; // the browser wants a tap first
     }
   }, [ensureAudio, fadeTo]);
+
+  // Browsers always allow silent playback, so the track starts at once, muted, and the sound
+  // comes up on the visitor's first tap or key press.
+  const startMuted = useCallback(async () => {
+    const audio = ensureAudio();
+    try {
+      audio.muted = true;
+      await audio.play();
+      setPlaying(true);
+      return true;
+    } catch {
+      audio.muted = false;
+      return false;
+    }
+  }, [ensureAudio]);
+
+  const unmute = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return false;
+    audio.muted = false;
+    if (audio.paused) return false;
+    fadeTo(VOLUME, 1800);
+    return true;
+  }, [fadeTo]);
 
   const pause = useCallback(() => {
     setPlaying(false);
@@ -105,13 +130,14 @@ export function MusicPlayer() {
     if (!wantsMusic.current) return;
 
     let started = false;
-    const events = ["pointerdown", "keydown", "touchend"] as const;
+    const events = ["pointerdown", "keydown", "touchend", "click"] as const;
     const cleanup = () => events.forEach((e) => window.removeEventListener(e, onFirst));
     async function onFirst() {
       if (started) return;
       started = true;
       cleanup();
-      if (wantsMusic.current) await start();
+      if (!wantsMusic.current) return;
+      if (!unmute()) await start();
     }
     events.forEach((e) => window.addEventListener(e, onFirst, { passive: true }));
 
@@ -120,10 +146,12 @@ export function MusicPlayer() {
       if (ok) {
         started = true;
         cleanup();
+      } else if (!started) {
+        startMuted();
       }
     });
     return cleanup;
-  }, [hidden, start]);
+  }, [hidden, start, startMuted, unmute]);
 
   // Pause while the tab is in the background.
   useEffect(() => {
