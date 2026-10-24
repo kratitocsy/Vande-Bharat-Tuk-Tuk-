@@ -2457,7 +2457,35 @@ h1, h2, h3 {
 }
 
 .hero-card {
-  background: linear-gradient(170deg, #ffd88a 0%, #ffe9bd 46%, #fff6e3 100%);
+  aspect-ratio: 797 / 653;
+  background: #ffe9bd;
+}
+
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-pattern {
+  display: none;
+}
+
+.qc-img {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(80, 50, 0, .12);
+}
+
+/* Cards sit over the artwork; fully opaque so nothing shows through. */
+.float-card {
+  background: #fffdf8;
+  box-shadow: 0 14px 30px -14px rgba(60, 35, 0, .45);
 }
 
 .quick-picks {
@@ -2504,34 +2532,6 @@ h1, h2, h3 {
 .qc-ico svg {
   width: 20px;
   height: 20px;
-}
-
-.qc-temple::after,
-.qc-temple2::after,
-.qc-temple3::after {
-  content: "";
-  width: 22px;
-  height: 24px;
-  background: currentColor;
-  -webkit-mask: var(--qc-mask) center / contain no-repeat;
-  mask: var(--qc-mask) center / contain no-repeat;
-}
-
-.qc-temple  { --qc-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cpath d='M12 0l2 4h-4zM9 5h6l1 4H8zM7 10h10l1 4H6zM5 15h14l1 5H4zM2 21h20v5H2z'/%3E%3C/svg%3E"); }
-.qc-temple2 { --qc-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cpath d='M12 1l3 5h-6zM8 7h8l1 5H7zM5 13h14l1 6H4zM2 20h20v6H2z'/%3E%3C/svg%3E"); }
-.qc-temple3 { --qc-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cpath d='M12 2l4 6H8zM6 9h12l1 6H5zM3 16h18v10H3z'/%3E%3C/svg%3E"); }
-
-.qc-falls {
-  background: linear-gradient(160deg, #7ec8c0, #2f8a82);
-}
-
-.qc-falls::after {
-  content: "";
-  width: 22px;
-  height: 22px;
-  background: currentColor;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 3h18v3H3zM6 8h2.5v9H6zM10.7 8h2.6v12h-2.6zM15.5 8H18v9h-2.5zM2 21c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0v2c-2-1.5-4-1.5-6 0s-4 1.5-6 0-4-1.5-6 0z'/%3E%3C/svg%3E") center / contain no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 3h18v3H3zM6 8h2.5v9H6zM10.7 8h2.6v12h-2.6zM15.5 8H18v9h-2.5zM2 21c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0v2c-2-1.5-4-1.5-6 0s-4 1.5-6 0-4-1.5-6 0z'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .qc-plane {
