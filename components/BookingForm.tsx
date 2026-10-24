@@ -513,6 +513,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
                 >
                   Request another ride
                 </button>
+                <Link href="/#reviews" className="btn btn-outline btn-sm">Rate your ride</Link>
               </div>
             </div>
           </div>
@@ -565,6 +566,9 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
               {PHONE_DISPLAY}
             </a>
           </span>
+          <Link href="/#reviews" className="font-semibold text-green underline decoration-green/40 underline-offset-4">
+            Rate your ride
+          </Link>
         </p>
       )}
     </div>

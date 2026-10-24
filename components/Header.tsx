@@ -12,6 +12,7 @@ const NAV = [
   { href: "/#places", label: "Explore Khajuraho" },
   { href: "/#rides", label: "Tours" },
   { href: "/#safety", label: "Safety" },
+  { href: "/#reviews", label: "Reviews" },
   { href: "/#faq", label: "Help" },
 ];
 

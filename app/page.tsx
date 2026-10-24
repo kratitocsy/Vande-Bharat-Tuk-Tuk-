@@ -4,6 +4,7 @@ import { Hero } from "@/components/home/Hero";
 import { RideTabs } from "@/components/home/RideTabs";
 import { HowItWorks, Places, Safety, SectionHead, Why } from "@/components/home/Sections";
 import { Partner } from "@/components/home/Partner";
+import { Reviews } from "@/components/home/Reviews";
 import { CtaBand, FaqSection } from "@/components/home/FaqSection";
 
 export default function Home() {
@@ -28,6 +29,7 @@ export default function Home() {
         <Safety />
         <Places />
         <Partner />
+        <Reviews />
         <FaqSection />
         <CtaBand />
       </main>
