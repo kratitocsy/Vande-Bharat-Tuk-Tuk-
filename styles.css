@@ -413,7 +413,8 @@ h1, h2, h3 {
 
 .hero-copy h1 {
   margin: 18px 0 22px;
-  font-size: clamp(3rem, 6.2vw, 5.15rem);
+  font-size: clamp(2.7rem, 5vw, 4.6rem);
+  white-space: nowrap;
   line-height: .94;
   letter-spacing: -.048em;
 }
@@ -2052,7 +2053,8 @@ h1, h2, h3 {
   }
 
   .hero-copy h1 {
-    font-size: clamp(2.6rem, 12vw, 3.4rem);
+    font-size: clamp(2.3rem, 10.5vw, 3.2rem);
+    white-space: normal;
   }
 
   .hero-sub {
@@ -2438,4 +2440,124 @@ h1, h2, h3 {
   .partner-form .btn {
     justify-self: stretch;
   }
+}
+
+/* Front page (Khajuraho design) ------------------------------------------ */
+
+.eyebrow-hero {
+  align-items: center;
+}
+
+.eyebrow-temple {
+  width: 26px;
+  height: 34px;
+  margin-left: 2px;
+  color: #c98a55;
+  flex: none;
+}
+
+.hero-card {
+  background: linear-gradient(170deg, #ffd88a 0%, #ffe9bd 46%, #fff6e3 100%);
+}
+
+.quick-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.quick-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--white);
+  text-align: left;
+  font-size: .76rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  box-shadow: 0 10px 24px -20px rgba(80, 50, 0, .7);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+
+.quick-chip:hover {
+  transform: translateY(-2px);
+  border-color: rgba(11, 92, 74, .4);
+  background: var(--green-soft);
+}
+
+.qc-ico {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #f3c58a, #c98a55);
+  color: #fff;
+}
+
+.qc-ico svg {
+  width: 20px;
+  height: 20px;
+}
+
+.qc-temple::after,
+.qc-temple2::after,
+.qc-temple3::after {
+  content: "";
+  width: 22px;
+  height: 24px;
+  background: currentColor;
+  -webkit-mask: var(--qc-mask) center / contain no-repeat;
+  mask: var(--qc-mask) center / contain no-repeat;
+}
+
+.qc-temple  { --qc-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cpath d='M12 0l2 4h-4zM9 5h6l1 4H8zM7 10h10l1 4H6zM5 15h14l1 5H4zM2 21h20v5H2z'/%3E%3C/svg%3E"); }
+.qc-temple2 { --qc-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cpath d='M12 1l3 5h-6zM8 7h8l1 5H7zM5 13h14l1 6H4zM2 20h20v6H2z'/%3E%3C/svg%3E"); }
+.qc-temple3 { --qc-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cpath d='M12 2l4 6H8zM6 9h12l1 6H5zM3 16h18v10H3z'/%3E%3C/svg%3E"); }
+
+.qc-falls {
+  background: linear-gradient(160deg, #7ec8c0, #2f8a82);
+}
+
+.qc-falls::after {
+  content: "";
+  width: 22px;
+  height: 22px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 3h18v3H3zM6 8h2.5v9H6zM10.7 8h2.6v12h-2.6zM15.5 8H18v9h-2.5zM2 21c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0v2c-2-1.5-4-1.5-6 0s-4 1.5-6 0-4-1.5-6 0z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 3h18v3H3zM6 8h2.5v9H6zM10.7 8h2.6v12h-2.6zM15.5 8H18v9h-2.5zM2 21c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0v2c-2-1.5-4-1.5-6 0s-4 1.5-6 0-4-1.5-6 0z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.qc-plane {
+  background: #f3efe5;
+  color: var(--ink);
+}
+
+@media (max-width: 560px) {
+  .quick-picks {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -18px;
+    padding: 4px 18px 10px;
+    scrollbar-width: none;
+  }
+
+  .quick-picks::-webkit-scrollbar {
+    display: none;
+  }
+
+  .quick-chip {
+    flex: none;
+  }
+}
+
+.hero-copy,
+.hero-visual {
+  min-width: 0;
 }

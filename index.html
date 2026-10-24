@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Indo Tuk Tuk — Auto rickshaw rides in Khajuraho</title>
+  <title>Khajuraho Tuk Tuk — Auto rickshaw rides in Khajuraho</title>
   <meta name="description" content="Book an auto rickshaw in Khajuraho. Fixed fares between your hotel, the temples, the airport and the railway station, plus temple tours and day trips.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@
 
   <header class="site-header" id="top">
     <div class="container header-inner">
-      <a class="brand" href="#top" aria-label="Indo Tuk Tuk home">
+      <a class="brand" href="#top" aria-label="Khajuraho Tuk Tuk home">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 40 40" fill="none">
             <path d="M7 24c0-5 4-8 9-8h8c5 0 9 3 9 8v4H7v-4Z" fill="#ffc53d"/>
@@ -28,15 +28,15 @@
             <circle cx="27" cy="30" r="1.6" fill="#ffc53d"/>
           </svg>
         </span>
-        <span class="brand-name">Indo<strong>Tuk Tuk</strong></span>
+        <span class="brand-name">Khajuraho<strong>Tuk Tuk</strong></span>
       </a>
 
       <nav class="nav" id="nav" aria-label="Main navigation">
-        <a href="#rides">Rides &amp; tours</a>
+        <a href="#book">Ride</a>
         <a href="#how">How it works</a>
+        <a href="#places">Explore Khajuraho</a>
+        <a href="#rides">Tours</a>
         <a href="#safety">Safety</a>
-        <a href="#places">Where we go</a>
-        <a href="#drive">Drive with us</a>
         <a href="#faq">Help</a>
       </nav>
 
@@ -53,9 +53,9 @@
     <section class="hero" id="book">
       <div class="container hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow reveal">Khajuraho's auto rickshaw service</p>
-          <h1 class="reveal">Hop in.<br><span class="highlight">See Khajuraho.</span></h1>
-          <p class="hero-sub reveal">Tuk tuk rides between your hotel, the temples, the airport and the railway station. Your fixed fare is shown before you book, and your driver knows every temple in town.</p>
+          <p class="eyebrow eyebrow-hero reveal">Khajuraho's three-wheeled way to move <svg class="eyebrow-temple" viewBox="0 0 40 52" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 2v4M17 8h6M16 10h8l-1 5H17zM14 15h12l-1 5H15zM12 20h16l-1 6H13zM10 26h20l-1 7H11zM7 33h26v4H7zM4 37h32v13H4z"/><path d="M16 50V41h8v9"/></svg></p>
+          <h1 class="reveal">Hop in.<br><span class="highlight">Explore Khajuraho.</span></h1>
+          <p class="hero-sub reveal">Tuk tuks at your fingertips. Visit temples, museums, local markets and nearby attractions with local drivers, fixed fares, and a town that feels close.</p>
 
           <form class="ride-form reveal" id="ride-form" novalidate>
             <div class="trip-banner" id="trip-banner" hidden>
@@ -80,6 +80,7 @@
                     <option value="western-temples">Western Group of Temples</option>
                     <option value="matangeshwar-temple">Matangeshwar Temple</option>
                     <option value="eastern-temples">Eastern Group (Jain Temples)</option>
+                    <option value="javari-temple">Javari Temple</option>
                     <option value="duladeo-temple">Duladeo Temple (Southern Group)</option>
                     <option value="chaturbhuj-temple">Chaturbhuj Temple (Southern Group)</option>
                   </optgroup>
@@ -163,6 +164,14 @@
             </div>
           </form>
 
+          <div class="quick-picks reveal" aria-label="Popular places">
+            <button class="quick-chip" type="button" data-drop="western-temples"><span class="qc-ico qc-temple" aria-hidden="true"></span><span>Western<br>Group of Temples</span></button>
+            <button class="quick-chip" type="button" data-drop="eastern-temples"><span class="qc-ico qc-temple2" aria-hidden="true"></span><span>Eastern<br>Group of Temples</span></button>
+            <button class="quick-chip" type="button" data-drop="javari-temple"><span class="qc-ico qc-temple3" aria-hidden="true"></span><span>Javari<br>Temple</span></button>
+            <button class="quick-chip" type="button" data-trip="raneh-falls"><span class="qc-ico qc-falls" aria-hidden="true"></span><span>Raneh<br>Falls</span></button>
+            <button class="quick-chip" type="button" data-drop="airport"><span class="qc-ico qc-plane" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5Z"/></svg></span><span>Khajuraho<br>Airport</span></button>
+          </div>
+
           <div class="hero-trust reveal">
             <div class="avatars" aria-hidden="true">
               <span class="avatar a1">RK</span>
@@ -182,7 +191,7 @@
         <div class="hero-visual reveal">
           <div class="hero-card">
             <div class="hero-pattern" aria-hidden="true"></div>
-            <svg class="tuk-art" viewBox="0 0 600 460" role="img" aria-label="Illustration of a yellow and green Indo Tuk Tuk auto rickshaw">
+            <svg class="tuk-art" viewBox="0 0 600 460" role="img" aria-label="Illustration of a green and yellow tuk tuk in front of a Khajuraho temple">
               <defs>
                 <radialGradient id="sunG" cx=".5" cy=".5" r=".5">
                   <stop offset="0" stop-color="#fff7dc"/>
@@ -214,15 +223,18 @@
                 <path d="M92 160q6-6 12 0 6-6 12 0"/>
               </g>
 
-              <g fill="#0b4a3c" opacity=".10">
-                <rect x="36" y="300" width="38" height="92" rx="6"/>
-                <rect x="86" y="268" width="30" height="124" rx="6"/>
-                <rect x="128" y="316" width="44" height="76" rx="6"/>
-                <rect x="474" y="286" width="34" height="106" rx="6"/>
-                <rect x="520" y="308" width="46" height="84" rx="6"/>
+              <g><g fill="#b9783f" opacity="0.3"><rect x="13" y="382" width="114" height="16" rx="2"/><rect x="24" y="362" width="93" height="21" rx="2"/><rect x="27.0" y="338.0" width="86.0" height="25.0" rx="3"/><rect x="24.0" y="338.0" width="92.0" height="4" rx="2"/><rect x="32.6" y="314.0" width="74.8" height="25.0" rx="3"/><rect x="29.6" y="314.0" width="80.8" height="4" rx="2"/><rect x="38.2" y="290.0" width="63.6" height="25.0" rx="3"/><rect x="35.2" y="290.0" width="69.6" height="4" rx="2"/><rect x="43.8" y="266.0" width="52.5" height="25.0" rx="3"/><rect x="40.8" y="266.0" width="58.5" height="4" rx="2"/><rect x="49.4" y="242.0" width="41.3" height="25.0" rx="3"/><rect x="46.4" y="242.0" width="47.3" height="4" rx="2"/><rect x="55.0" y="218.0" width="30.1" height="25.0" rx="3"/><rect x="52.0" y="218.0" width="36.1" height="4" rx="2"/><ellipse cx="70" cy="212.0" rx="9.5" ry="6"/><rect x="68.5" y="196.0" width="3" height="14"/><circle cx="70" cy="193.0" r="3"/></g><g fill="#b9783f" opacity="0.4"><rect x="172" y="382" width="156" height="16" rx="2"/><rect x="186" y="362" width="127" height="21" rx="2"/><rect x="191.0" y="338.0" width="118.0" height="25.0" rx="3"/><rect x="188.0" y="338.0" width="124.0" height="4" rx="2"/><rect x="196.8" y="314.0" width="106.5" height="25.0" rx="3"/><rect x="193.8" y="314.0" width="112.5" height="4" rx="2"/><rect x="202.5" y="290.0" width="95.0" height="25.0" rx="3"/><rect x="199.5" y="290.0" width="101.0" height="4" rx="2"/><rect x="208.3" y="266.0" width="83.5" height="25.0" rx="3"/><rect x="205.3" y="266.0" width="89.5" height="4" rx="2"/><rect x="214.0" y="242.0" width="72.0" height="25.0" rx="3"/><rect x="211.0" y="242.0" width="78.0" height="4" rx="2"/><rect x="219.8" y="218.0" width="60.5" height="25.0" rx="3"/><rect x="216.8" y="218.0" width="66.5" height="4" rx="2"/><rect x="225.5" y="194.0" width="49.0" height="25.0" rx="3"/><rect x="222.5" y="194.0" width="55.0" height="4" rx="2"/><rect x="231.3" y="170.0" width="37.5" height="25.0" rx="3"/><rect x="228.3" y="170.0" width="43.5" height="4" rx="2"/><ellipse cx="250" cy="164.0" rx="13.0" ry="6"/><rect x="248.5" y="148.0" width="3" height="14"/><circle cx="250" cy="145.0" r="3"/></g><g fill="#a8663a" opacity="0.55"><rect x="349" y="382" width="211" height="16" rx="2"/><rect x="369" y="362" width="173" height="21" rx="2"/><rect x="375.0" y="335.0" width="160.0" height="28.0" rx="3"/><rect x="372.0" y="335.0" width="166.0" height="4" rx="2"/><rect x="381.2" y="308.0" width="147.5" height="28.0" rx="3"/><rect x="378.2" y="308.0" width="153.5" height="4" rx="2"/><rect x="387.5" y="281.0" width="135.0" height="28.0" rx="3"/><rect x="384.5" y="281.0" width="141.0" height="4" rx="2"/><rect x="393.7" y="254.0" width="122.6" height="28.0" rx="3"/><rect x="390.7" y="254.0" width="128.6" height="4" rx="2"/><rect x="400.0" y="227.0" width="110.1" height="28.0" rx="3"/><rect x="397.0" y="227.0" width="116.1" height="4" rx="2"/><rect x="406.2" y="200.0" width="97.6" height="28.0" rx="3"/><rect x="403.2" y="200.0" width="103.6" height="4" rx="2"/><rect x="412.4" y="173.0" width="85.1" height="28.0" rx="3"/><rect x="409.4" y="173.0" width="91.1" height="4" rx="2"/><rect x="418.7" y="146.0" width="72.6" height="28.0" rx="3"/><rect x="415.7" y="146.0" width="78.6" height="4" rx="2"/><rect x="424.9" y="119.0" width="60.2" height="28.0" rx="3"/><rect x="421.9" y="119.0" width="66.2" height="4" rx="2"/><rect x="431.2" y="92.0" width="47.7" height="28.0" rx="3"/><rect x="428.2" y="92.0" width="53.7" height="4" rx="2"/><ellipse cx="455" cy="86.0" rx="17.6" ry="6"/><rect x="453.5" y="70.0" width="3" height="14"/><circle cx="455" cy="67.0" r="3"/></g></g><g fill="#7a8f4a" opacity=".38"><ellipse cx="40" cy="392" rx="46" ry="26"/><ellipse cx="590" cy="392" rx="40" ry="22"/></g>
+
+              <g>
+                <rect x="548" y="240" width="7" height="158" rx="2" fill="#6b4a33"/>
+                <rect x="498" y="214" width="98" height="56" rx="6" fill="#7a4a30"/>
+                <rect x="503" y="219" width="88" height="46" rx="4" fill="none" stroke="#e8c9a0" stroke-width="1.5" opacity=".7"/>
+                <text x="547" y="238" text-anchor="middle" font-family="'Noto Sans Devanagari', Inter, sans-serif" font-size="13" font-weight="700" fill="#fff3dc">खजुराहो</text>
+                <text x="544" y="253" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="800" letter-spacing="1" fill="#fff3dc">KHAJURAHO</text>
+                <path d="M524 260h40m0 0-5-4m5 4-5 4" stroke="#fff3dc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
               </g>
 
-              <ellipse cx="315" cy="398" rx="238" ry="20" fill="#0b4a3c" opacity=".13"/>
+              <g fill="#e45a54" opacity=".9"><circle cx="30" cy="392" r="6"/><circle cx="44" cy="384" r="5"/><circle cx="20" cy="380" r="5"/><circle cx="560" cy="396" r="6"/><circle cx="578" cy="388" r="5"/></g><ellipse cx="315" cy="398" rx="238" ry="20" fill="#0b4a3c" opacity=".13"/>
               <path d="M28 398h544" stroke="#0b4a3c" stroke-opacity=".18" stroke-width="4" stroke-linecap="round"/>
 
               <g stroke="#0b4a3c" stroke-opacity=".18" stroke-width="5" stroke-linecap="round">
@@ -258,7 +270,7 @@
                 </g>
 
                 <rect x="330" y="147" width="90" height="21" rx="10" fill="#0b2f27"/>
-                <text x="375" y="162" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="9" font-weight="700" letter-spacing="2" fill="#ffc53d">TAXI</text>
+                <text x="375" y="162" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="8" font-weight="700" letter-spacing="1.6" fill="#ffc53d">TUK TUK</text>
 
                 <path d="M156 322c-2-12 6-22 22-26l298-8c14 3 22 13 24 27l2 14c2 10-6 14-18 14H168c-10 0-16-4-18-10Z" fill="url(#bodyG)"/>
                 <path d="M172 302c76-7 220-9 314-2" stroke="#ffc53d" stroke-width="4" stroke-linecap="round" opacity=".85"/>
@@ -272,7 +284,7 @@
 
                 <path d="M462 342h34c-2 5-7 6-12 6h-12c-6 0-9-2-10-6Z" fill="#0b3f34"/>
 
-                <text x="232" y="336" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="800" letter-spacing="4" fill="#ffd977">INDO</text>
+                <text x="316" y="336" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="15" font-weight="800" letter-spacing="3.5" fill="#ffd977">KHAJURAHO</text>
 
                 <circle cx="452" cy="322" r="8" fill="#ffc53d"/>
                 <circle cx="452" cy="322" r="3" fill="#0b3f34"/>
@@ -305,19 +317,19 @@
             <div class="float-card float-eta">
               <span class="pulse" aria-hidden="true"></span>
               <div>
-                <strong>Tuk tuk nearby</strong>
-                <span>Waiting near the temples</span>
+                <strong>Tuk Tuk nearby</strong>
+                <span>Arriving in minutes</span>
               </div>
             </div>
 
             <div class="float-card float-fare">
               <div class="fare-amount">
                 <span>Fixed fare</span>
-                <strong>₹120</strong>
+                <strong>₹60</strong>
               </div>
               <div class="fare-route">
-                <strong>Your hotel → Airport</strong>
-                <span>About 5 km</span>
+                <strong>Your hotel → Western Group</strong>
+                <span>About 1 km · minimum fare</span>
               </div>
             </div>
 
@@ -541,7 +553,7 @@
       <div class="container">
         <div class="section-head reveal">
           <div>
-            <p class="eyebrow">Why Indo Tuk Tuk</p>
+            <p class="eyebrow">Why Khajuraho Tuk Tuk</p>
             <h2>Small wheels. Big peace of mind.</h2>
           </div>
         </div>
@@ -622,7 +634,7 @@
                 <span class="avatar trip-avatar">RK</span>
                 <div>
                   <strong>Ravi Kumar</strong>
-                  <span>Indo Tuk Tuk · MP 16 R 4821</span>
+                  <span>Tuk Tuk · MP 16 R 4821</span>
                 </div>
                 <span class="trip-rating">4.9 ★</span>
               </div>
@@ -649,6 +661,7 @@
           <li>Western Group of Temples</li>
           <li>Matangeshwar Temple</li>
           <li>Eastern Group (Jain Temples)</li>
+          <li>Javari Temple</li>
           <li>Duladeo Temple</li>
           <li>Chaturbhuj Temple</li>
           <li>Archaeological Museum</li>
@@ -801,7 +814,7 @@
     <div class="container">
       <div class="footer-top">
         <div class="footer-brand">
-          <a class="brand brand-light" href="#top" aria-label="Indo Tuk Tuk home">
+          <a class="brand brand-light" href="#top" aria-label="Khajuraho Tuk Tuk home">
             <span class="brand-mark" aria-hidden="true">
               <svg viewBox="0 0 40 40" fill="none">
                 <path d="M7 24c0-5 4-8 9-8h8c5 0 9 3 9 8v4H7v-4Z" fill="#ffc53d"/>
@@ -812,7 +825,7 @@
                 <circle cx="27" cy="30" r="1.6" fill="#0b0f0d"/>
               </svg>
             </span>
-            <span class="brand-name">Indo<strong>Tuk Tuk</strong></span>
+            <span class="brand-name">Khajuraho<strong>Tuk Tuk</strong></span>
           </a>
           <p>Khajuraho, three wheels at a time.</p>
         </div>
@@ -844,7 +857,7 @@
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; <span id="year">2026</span> Indo Tuk Tuk, Khajuraho, Madhya Pradesh.</p>
+        <p>&copy; <span id="year">2026</span> Khajuraho Tuk Tuk, Madhya Pradesh.</p>
         <div class="footer-legal">
           <a href="#top">Back to top</a>
         </div>

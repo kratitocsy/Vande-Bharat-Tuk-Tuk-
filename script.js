@@ -414,6 +414,27 @@
     });
   });
 
+  // Quick-pick chips under the form.
+  document.querySelectorAll(".quick-chip").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      if (chip.dataset.trip) {
+        setTrip(chip.dataset.trip);
+        showToast((TRIP_NAMES[chip.dataset.trip] || "Trip") + ": choose your pickup, then tap See fare");
+        if (pickup && !pickup.value) pickup.focus();
+        return;
+      }
+      setTrip("city-ride");
+      if (pickup && dropoff) {
+        if (!pickup.value) pickup.value = "khajuraho-town";
+        if (pickup.value === chip.dataset.drop) pickup.value = "khajuraho-town";
+        fillDropoff();
+        dropoff.value = chip.dataset.drop;
+        resetQuote();
+        if (quoteBtn) quoteBtn.focus();
+      }
+    });
+  });
+
   // Live fares for the airport and station cards; the printed price stays if this fails.
   document.querySelectorAll("[data-quote-from]").forEach(function (el) {
     rpc("get_quote", {
