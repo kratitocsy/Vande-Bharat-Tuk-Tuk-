@@ -2625,3 +2625,64 @@ h1, h2, h3 {
   display: flex;
   gap: 8px;
 }
+
+/* Call Mahi button in the header --------------------------------------------- */
+
+.btn-call {
+  gap: 10px;
+  padding: .5rem 1.05rem .5rem .8rem;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 1px solid #f0b72a;
+  text-align: left;
+}
+
+.btn-call:hover {
+  background: #ffd05c;
+}
+
+.btn-call svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.call-text {
+  display: grid;
+  line-height: 1.1;
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+
+.call-text small {
+  font-size: .6rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #6a4b00;
+}
+
+@media (max-width: 640px) {
+  .header-book {
+    display: none;
+  }
+
+  .btn-call {
+    padding: .45rem .85rem .45rem .7rem;
+  }
+
+  .call-text {
+    font-size: .88rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .call-text small {
+    display: none;
+  }
+
+  .header-inner {
+    gap: 8px;
+  }
+}
