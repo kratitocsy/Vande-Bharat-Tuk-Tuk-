@@ -40,6 +40,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Search is unavailable right now" }, { status: 502 });
     }
     const raw = await res.json();
+    if (new URL(request.url).searchParams.get("debug") === "1") return NextResponse.json({ shape: JSON.stringify(raw).slice(0, 900) });
     const hit = pick(raw);
     if (!hit) console.warn("[geocode] no usable result", JSON.stringify(raw).slice(0, 300));
     if (!hit) return NextResponse.json({ error: "We could not find that place near Khajuraho" }, { status: 404 });
