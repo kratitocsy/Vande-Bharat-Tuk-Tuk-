@@ -322,7 +322,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
         id={id("ride-form")}
         onSubmit={findRiders}
         noValidate
-        className="w-full max-w-[540px] rounded-3xl border border-line bg-paper p-2 shadow-card"
+        className="w-full max-w-[470px]"
       >
         {!needsDropoff && (
           <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-2xl bg-sun-soft px-3.5 py-2.5 text-sm">
@@ -342,7 +342,17 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
           </div>
         )}
 
-        <div className="rounded-[17px] border border-line">
+        <button
+          type="button"
+          onClick={toggleLater}
+          aria-expanded={later}
+          className="mb-4 inline-flex h-12 items-center gap-2.5 rounded-full bg-[#f3f3f3] px-5 text-base font-semibold transition hover:bg-[#e8e8e8]"
+        >
+          <ClockIcon className="h-5 w-5" />
+          <span>{later ? "Pickup later" : "Pickup now"}</span>
+        </button>
+
+        <div className={`relative grid gap-2.5 ${needsDropoff ? "before:pointer-events-none before:absolute before:z-[2] before:bottom-7 before:left-[20px] before:top-7 before:w-0.5 before:bg-ink" : ""}`}>
           <PlaceInput
             id={id("pickup")}
             ref={pickupInput}
@@ -390,7 +400,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
           )}
 
           {later && (
-            <div className="grid gap-1.5 rounded-b-[17px] border-t border-dashed border-line bg-[#fffefa] px-4 pb-3 pt-3.5">
+            <div className="grid gap-1.5 rounded-lg bg-[#f3f3f3] px-4 pb-3 pt-3.5">
               <label htmlFor={id("ride-time")} className="label">
                 When should we pick you up? (India time)
               </label>
@@ -411,7 +421,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
         </div>
 
         {(routeInfo || mapFailed) && (
-          <div className="px-2 pt-2.5 text-[0.8rem] text-ink-soft">
+          <div className="pt-3 text-[0.8rem] text-ink-soft">
             {routeInfo && needsDropoff && (
               <p>
                 {routeInfo.source === "road" ? "By road: " : "About "}
@@ -423,22 +433,11 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
           </div>
         )}
 
-        <div className="flex items-center gap-2.5 px-1.5 pb-0.5 pt-2.5">
-          <button
-            type="button"
-            onClick={toggleLater}
-            aria-expanded={later}
-            className="inline-flex items-center gap-2 rounded-xl border border-line bg-cream px-4 py-3 text-sm font-semibold transition hover:border-[#ecd9a4] hover:bg-sun-soft"
-          >
-            <ClockIcon className="h-[18px] w-[18px]" />
-            <span>{later ? "Later" : "Now"}</span>
+        {step === "form" && (
+          <button type="submit" className="mt-4 inline-flex h-14 items-center justify-center gap-2 rounded-lg bg-ink px-8 text-base font-semibold text-white transition hover:bg-black active:scale-[0.99] max-sm:w-full">
+            Find riders <ArrowIcon className="h-4 w-4" />
           </button>
-          {step === "form" && (
-            <button type="submit" className="btn btn-dark flex-1 py-3.5">
-              Find riders <ArrowIcon className="h-4 w-4" />
-            </button>
-          )}
-        </div>
+        )}
 
         {step === "details" && (
           <div className="mt-2.5 border-t border-dashed border-line px-3 pb-2 pt-4">

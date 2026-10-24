@@ -119,17 +119,17 @@ export const PlaceInput = forwardRef<PlaceInputHandle, Props>(function PlaceInpu
 
   const dot =
     marker === "pickup" ? (
-      <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-full border-[3px] border-ink" />
+      <span aria-hidden className="relative z-[1] h-2.5 w-2.5 shrink-0 rounded-full bg-ink" />
     ) : (
-      <span aria-hidden className="h-2.5 w-2.5 shrink-0 rounded-[2px] border-[3px] border-sun" />
+      <span aria-hidden className="relative z-[1] h-2.5 w-2.5 shrink-0 bg-ink" />
     );
 
   return (
     <div className="relative">
-      <div className={`flex min-h-16 items-center gap-3.5 bg-[#fffefa] px-4 pb-2.5 pt-3 pr-4 transition focus-within:bg-[#fffbea] ${marker === "pickup" ? "rounded-t-[17px]" : "rounded-b-[17px] border-t border-line"}`}>
+      <div className="flex h-14 items-center gap-4 rounded-lg bg-[#f3f3f3] px-4 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-ink">
         {dot}
         <div className="min-w-0 flex-1">
-          <label htmlFor={id} className="label block">
+          <label htmlFor={id} className="sr-only">
             {label}
           </label>
           <input
@@ -160,7 +160,7 @@ export const PlaceInput = forwardRef<PlaceInputHandle, Props>(function PlaceInpu
               if (point && e.target.value !== point.name) onClear();
             }}
             onKeyDown={onKeyDown}
-            className="mt-0.5 w-full truncate bg-transparent text-[0.97rem] font-medium outline-none placeholder:font-normal placeholder:text-[#8f9993]"
+            className="w-full truncate bg-transparent text-base font-medium outline-none placeholder:font-normal placeholder:text-[#6b6b6b]"
           />
         </div>
         {loading && <span aria-hidden className="text-xs text-muted">…</span>}
