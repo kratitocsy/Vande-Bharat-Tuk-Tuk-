@@ -1,5 +1,6 @@
 "use client";
 
+import { MusicPlayer } from "./MusicPlayer";
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 
 /* Toast ------------------------------------------------------------------ */
@@ -40,6 +41,7 @@ export function Providers({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={toast}>
       <BookingContext.Provider value={booking}>
         {children}
+        <MusicPlayer />
         <div
           role="status"
           aria-live="polite"
