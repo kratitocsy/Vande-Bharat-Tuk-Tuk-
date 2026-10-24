@@ -126,10 +126,10 @@ export const PlaceInput = forwardRef<PlaceInputHandle, Props>(function PlaceInpu
 
   return (
     <div className="relative">
-      <div className="flex h-14 items-center gap-4 rounded-lg bg-[#f3f3f3] px-4 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-ink">
+      <div className="flex h-16 items-center gap-4 rounded-xl bg-[#f4efe3] px-4 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-ink">
         {dot}
         <div className="min-w-0 flex-1">
-          <label htmlFor={id} className="sr-only">
+          <label htmlFor={id} className="label block !text-[0.62rem]">
             {label}
           </label>
           <input
@@ -160,7 +160,7 @@ export const PlaceInput = forwardRef<PlaceInputHandle, Props>(function PlaceInpu
               if (point && e.target.value !== point.name) onClear();
             }}
             onKeyDown={onKeyDown}
-            className="w-full truncate bg-transparent text-base font-medium outline-none placeholder:font-normal placeholder:text-[#6b6b6b]"
+            className="mt-0.5 w-full truncate bg-transparent text-base font-semibold outline-none placeholder:font-normal placeholder:text-[#6b6b6b]"
           />
         </div>
         {loading && <span aria-hidden className="text-xs text-muted">…</span>}

@@ -21,12 +21,10 @@ export function Footer() {
       <div className="container-x">
         <div className="grid gap-10 border-b border-white/10 pb-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_repeat(4,1fr)]">
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 font-display text-lg font-semibold text-white" aria-label="Indo Tuk Tuk home">
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/10">
-                <LogoMark light />
-              </span>
+            <Link href="/" className="flex items-center gap-2.5 font-display text-lg font-bold tracking-tight text-white" aria-label="Indo Taxi home">
+              <LogoMark />
               <span>
-                Indo<strong className="ml-1 text-sun">Tuk Tuk</strong>
+                indo<strong className="text-sun">taxi</strong>
               </span>
             </Link>
             <p className="mt-4 max-w-[260px] text-sm text-white/60">Khajuraho, three wheels at a time.</p>

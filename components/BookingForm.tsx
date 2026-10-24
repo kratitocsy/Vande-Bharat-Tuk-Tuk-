@@ -28,6 +28,15 @@ function localInputValue(d: Date) {
 
 type Props = { initialTrip?: string; initialDropoff?: string; showQuickPicks?: boolean; idPrefix?: string };
 
+function CalendarGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="h-[17px] w-[17px]" aria-hidden>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="3" />
+      <path d="M8 3v4M16 3v4M3.5 10h17" />
+    </svg>
+  );
+}
+
 export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQuickPicks = false, idPrefix = "" }: Props) {
   const { show } = useToast();
   const { intent } = useBooking();
@@ -322,7 +331,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
         id={id("ride-form")}
         onSubmit={findRiders}
         noValidate
-        className="w-full max-w-[470px]"
+        className="w-full max-w-[540px] rounded-3xl border border-line bg-paper p-4 shadow-card sm:p-5"
       >
         {!needsDropoff && (
           <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-2xl bg-sun-soft px-3.5 py-2.5 text-sm">
@@ -342,17 +351,23 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
           </div>
         )}
 
-        <button
-          type="button"
-          onClick={toggleLater}
-          aria-expanded={later}
-          className="mb-4 inline-flex h-12 items-center gap-2.5 rounded-full bg-[#f3f3f3] px-5 text-base font-semibold transition hover:bg-[#e8e8e8]"
-        >
-          <ClockIcon className="h-5 w-5" />
-          <span>{later ? "Pickup later" : "Pickup now"}</span>
-        </button>
+        <div role="tablist" aria-label="When do you want to ride?" className="mb-4 inline-flex rounded-full bg-[#f1ece0] p-1 text-sm font-semibold">
+          {([false, true] as const).map((isLater) => (
+            <button
+              key={String(isLater)}
+              type="button"
+              role="tab"
+              aria-selected={later === isLater}
+              onClick={() => later !== isLater && toggleLater()}
+              className={`inline-flex h-10 items-center gap-2 rounded-full px-4 transition ${later === isLater ? "bg-paper text-ink shadow-sm" : "text-muted hover:text-ink"}`}
+            >
+              {isLater ? <CalendarGlyph /> : <ClockIcon className="h-[17px] w-[17px]" />}
+              {isLater ? "Schedule" : "Ride now"}
+            </button>
+          ))}
+        </div>
 
-        <div className={`relative grid gap-2.5 ${needsDropoff ? "before:pointer-events-none before:absolute before:z-[2] before:bottom-7 before:left-[20px] before:top-7 before:w-0.5 before:bg-ink" : ""}`}>
+        <div className={`relative grid gap-2.5 ${needsDropoff ? "before:pointer-events-none before:absolute before:z-[2] before:bottom-8 before:left-[20px] before:top-8 before:w-0.5 before:bg-ink" : ""}`}>
           <PlaceInput
             id={id("pickup")}
             ref={pickupInput}
@@ -400,7 +415,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
           )}
 
           {later && (
-            <div className="grid gap-1.5 rounded-lg bg-[#f3f3f3] px-4 pb-3 pt-3.5">
+            <div className="grid gap-1.5 rounded-xl bg-[#f4efe3] px-4 pb-3 pt-3.5">
               <label htmlFor={id("ride-time")} className="label">
                 When should we pick you up? (India time)
               </label>
@@ -434,7 +449,7 @@ export function BookingForm({ initialTrip = "city-ride", initialDropoff, showQui
         )}
 
         {step === "form" && (
-          <button type="submit" className="mt-4 inline-flex h-14 items-center justify-center gap-2 rounded-lg bg-ink px-8 text-base font-semibold text-white transition hover:bg-black active:scale-[0.99] max-sm:w-full">
+          <button type="submit" className="mt-4 inline-flex h-14 w-full items-center justify-center gap-2 rounded-full bg-ink px-8 text-base font-semibold text-white transition hover:bg-black active:scale-[0.99] max-sm:w-full">
             Find riders <ArrowIcon className="h-4 w-4" />
           </button>
         )}

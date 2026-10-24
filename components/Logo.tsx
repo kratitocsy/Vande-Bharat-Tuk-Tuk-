@@ -1,15 +1,11 @@
-export function LogoMark({ light = false }: { light?: boolean }) {
-  const body = light ? "#ffc53d" : "#ffc53d";
-  const wheel = light ? "#ffc53d" : "#0b2f27";
-  const hub = light ? "#0b0f0d" : "#ffc53d";
+/** The Indo Tuk Tuk mark: a yellow location pin with a search handle, on a black tile. */
+export function LogoMark({ className = "h-9 w-9 sm:h-10 sm:w-10" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 40 40" fill="none" aria-hidden className="h-[30px] w-[30px]">
-      <path d="M7 24c0-5 4-8 9-8h8c5 0 9 3 9 8v4H7v-4Z" fill={body} />
-      <path d="M12 16c0-4 3-7 7-7h2c4 0 7 3 7 7H12Z" fill={body} />
-      <circle cx="13" cy="30" r="4" fill={wheel} />
-      <circle cx="27" cy="30" r="4" fill={wheel} />
-      <circle cx="13" cy="30" r="1.6" fill={hub} />
-      <circle cx="27" cy="30" r="1.6" fill={hub} />
+    <svg viewBox="0 0 64 64" aria-hidden className={`shrink-0 ${className}`}>
+      <rect width="64" height="64" rx="16" fill="#111111" />
+      <path d="M32 13C24.3 13 18 19.3 18 27C18 37 32 51 32 51C32 51 46 37 46 27C46 19.3 39.7 13 32 13Z" fill="#FFC928" />
+      <circle cx="32" cy="27" r="6" fill="#111111" />
+      <path d="M49 44L55 50" stroke="#FFC928" strokeWidth="5" strokeLinecap="round" />
     </svg>
   );
 }
