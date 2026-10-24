@@ -62,137 +62,430 @@
     });
   }
 
+  // --- Supabase ---------------------------------------------------------
+  // The publishable key is meant to be public. Row-level security keeps
+  // bookings and enquiries private; the site can only call the three functions below.
+  const SUPABASE_URL = "https://vwyxrlfbpsimshvdnfid.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_LHiIdV8LAG969Nzi_iYJmA_Xbp4YRqT";
+
+  function rpc(name, args) {
+    return fetch(SUPABASE_URL + "/rest/v1/rpc/" + name, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(args)
+    }).then(function (res) {
+      return res.json().catch(function () { return null; }).then(function (data) {
+        if (!res.ok) {
+          const known = data && data.code === "22023" && data.message;
+          throw new Error(known ? data.message : "Something went wrong. Please try again or call us.");
+        }
+        return data;
+      });
+    }, function () {
+      throw new Error("No connection. Check your internet and try again.");
+    });
+  }
+
+  function rupees(n) {
+    return "₹" + Number(n).toLocaleString("en-IN");
+  }
+
+  function setBusy(button, busy) {
+    if (!button) return;
+    button.setAttribute("aria-busy", String(busy));
+    button.disabled = busy;
+  }
+
+  // --- Tabs -------------------------------------------------------------
   const tabs = document.querySelectorAll(".tab");
   const panels = document.querySelectorAll(".ride-grid");
 
+  function openTab(target) {
+    tabs.forEach(function (item) {
+      const active = item.dataset.tab === target;
+      item.classList.toggle("is-active", active);
+      item.setAttribute("aria-selected", String(active));
+    });
+    panels.forEach(function (panel) {
+      const active = panel.dataset.panel === target;
+      panel.classList.toggle("is-active", active);
+      if (active) {
+        panel.removeAttribute("hidden");
+      } else {
+        panel.setAttribute("hidden", "");
+      }
+    });
+    document.querySelectorAll('[data-panel="' + target + '"] .reveal, [data-panel="' + target + '"]').forEach(function (el) {
+      el.classList.add("is-visible");
+    });
+  }
+
   tabs.forEach(function (tab) {
     tab.addEventListener("click", function () {
-      const target = tab.dataset.tab;
-      tabs.forEach(function (item) {
-        const active = item === tab;
-        item.classList.toggle("is-active", active);
-        item.setAttribute("aria-selected", String(active));
-      });
-      panels.forEach(function (panel) {
-        const active = panel.dataset.panel === target;
-        panel.classList.toggle("is-active", active);
-        if (active) {
-          panel.removeAttribute("hidden");
-        } else {
-          panel.setAttribute("hidden", "");
-        }
-      });
+      openTab(tab.dataset.tab);
     });
   });
 
+  document.querySelectorAll("[data-open-tab]").forEach(function (link) {
+    link.addEventListener("click", function () {
+      openTab(link.dataset.openTab);
+    });
+  });
+
+  // --- Booking form -----------------------------------------------------
+  const form = document.getElementById("ride-form");
   const pickup = document.getElementById("pickup");
   const dropoff = document.getElementById("dropoff");
+  const dropoffField = document.getElementById("dropoff-field");
   const swapBtn = document.getElementById("swap-btn");
-
-  if (swapBtn && pickup && dropoff) {
-    swapBtn.addEventListener("click", function () {
-      const temp = pickup.value;
-      pickup.value = dropoff.value;
-      dropoff.value = temp;
-      pickup.focus();
-    });
-  }
-
   const scheduleToggle = document.getElementById("schedule-toggle");
   const scheduleRow = document.getElementById("schedule-row");
   const rideTime = document.getElementById("ride-time");
+  const quoteBtn = document.getElementById("quote-btn");
+  const quotePanel = document.getElementById("quote-panel");
+  const quoteFare = document.getElementById("quote-fare");
+  const quoteDetail = document.getElementById("quote-detail");
+  const confirmBtn = document.getElementById("confirm-btn");
+  const bookingDone = document.getElementById("booking-done");
+  const tripBanner = document.getElementById("trip-banner");
+  const tripBannerName = document.getElementById("trip-banner-name");
+  const tripClear = document.getElementById("trip-clear");
 
-  if (scheduleToggle && scheduleRow) {
-    const now = new Date();
-    now.setMinutes(now.getMinutes() + 15);
-    const pad = function (value) {
-      return String(value).padStart(2, "0");
-    };
-    if (rideTime) {
-      rideTime.min =
-        now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) +
-        "T" + pad(now.getHours()) + ":" + pad(now.getMinutes());
+  const TRIP_NAMES = {
+    "city-ride": "City ride",
+    "western-temples-visit": "Western Temples visit",
+    "temple-circuit": "Full temple circuit",
+    "light-and-sound-show": "Light & Sound Show",
+    "raneh-falls": "Raneh Falls & Ken Gharial",
+    "panna-national-park": "Panna National Park gate",
+    "pandav-falls": "Pandav Falls"
+  };
+
+  let trip = "city-ride";
+  let lastQuote = null;
+  let lastQuoteKey = "";
+
+  const places = pickup
+    ? Array.prototype.slice.call(pickup.querySelectorAll("option[value]:not([value=''])")).map(function (o) {
+        return { slug: o.value, name: o.textContent };
+      })
+    : [];
+
+  function fillDropoff() {
+    if (!dropoff || !pickup) return;
+    const keep = dropoff.value;
+    dropoff.innerHTML = "";
+    const first = document.createElement("option");
+    first.value = "";
+    first.disabled = true;
+    first.textContent = "Where to?";
+    dropoff.appendChild(first);
+    places.forEach(function (place) {
+      if (place.slug === pickup.value) return;
+      const option = document.createElement("option");
+      option.value = place.slug;
+      option.textContent = place.name;
+      dropoff.appendChild(option);
+    });
+    dropoff.value = Array.prototype.some.call(dropoff.options, function (o) { return o.value === keep; }) ? keep : "";
+  }
+
+  function resetQuote() {
+    lastQuote = null;
+    lastQuoteKey = "";
+    if (quotePanel) quotePanel.setAttribute("hidden", "");
+    if (quoteBtn) quoteBtn.hidden = false;
+    if (bookingDone) bookingDone.setAttribute("hidden", "");
+  }
+
+  function setTrip(slug) {
+    trip = slug;
+    const needsDropoff = slug === "city-ride";
+    if (dropoffField) dropoffField.hidden = !needsDropoff;
+    if (swapBtn) swapBtn.hidden = !needsDropoff;
+    if (tripBanner) {
+      tripBanner.hidden = needsDropoff;
+      if (tripBannerName) tripBannerName.textContent = TRIP_NAMES[slug] || "Tour";
     }
+    resetQuote();
+  }
 
-    scheduleToggle.addEventListener("click", function () {
-      const isHidden = scheduleRow.hasAttribute("hidden");
-      if (isHidden) {
-        scheduleRow.removeAttribute("hidden");
-        scheduleToggle.querySelector("span").textContent = "Later";
-        if (rideTime && !rideTime.value) {
-          rideTime.value =
-            now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) +
-            "T" + pad(now.getHours()) + ":" + pad(now.getMinutes());
-        }
-        if (rideTime) rideTime.focus();
-      } else {
-        scheduleRow.setAttribute("hidden", "");
-        scheduleToggle.querySelector("span").textContent = "Now";
-      }
+  fillDropoff();
+  setTrip("city-ride");
+
+  if (pickup) {
+    pickup.addEventListener("change", function () { fillDropoff(); resetQuote(); });
+  }
+  if (dropoff) {
+    dropoff.addEventListener("change", resetQuote);
+  }
+
+  if (swapBtn && pickup && dropoff) {
+    swapBtn.addEventListener("click", function () {
+      const a = pickup.value;
+      const b = dropoff.value;
+      pickup.value = b || "";
+      fillDropoff();
+      dropoff.value = a || "";
+      resetQuote();
     });
   }
 
-  const rideForm = document.getElementById("ride-form");
+  if (tripClear) {
+    tripClear.addEventListener("click", function () { setTrip("city-ride"); });
+  }
 
-  if (rideForm) {
-    rideForm.addEventListener("submit", function (event) {
+  function pad(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function localInputValue(date) {
+    return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate()) +
+      "T" + pad(date.getHours()) + ":" + pad(date.getMinutes());
+  }
+
+  if (scheduleToggle && scheduleRow) {
+    scheduleToggle.addEventListener("click", function () {
+      const opening = scheduleRow.hasAttribute("hidden");
+      scheduleRow.toggleAttribute("hidden", !opening);
+      scheduleToggle.setAttribute("aria-expanded", String(opening));
+      scheduleToggle.querySelector("span").textContent = opening ? "Later" : "Now";
+      if (opening && rideTime) {
+        const soon = new Date(Date.now() + 15 * 60000);
+        rideTime.min = localInputValue(soon);
+        if (!rideTime.value) rideTime.value = localInputValue(soon);
+        rideTime.focus();
+      } else if (rideTime) {
+        rideTime.value = "";
+      }
+      resetQuote();
+    });
+  }
+
+  if (rideTime) {
+    rideTime.addEventListener("change", resetQuote);
+  }
+
+  // The time box shows the visitor's own clock. Khajuraho is on India time (UTC+05:30),
+  // so build the timestamp from the typed wall-clock time with that offset.
+  function scheduledAt() {
+    if (!scheduleRow || scheduleRow.hasAttribute("hidden") || !rideTime || !rideTime.value) return null;
+    return rideTime.value + ":00+05:30";
+  }
+
+  function currentKey() {
+    return [trip, pickup && pickup.value, trip === "city-ride" && dropoff ? dropoff.value : "", scheduledAt() || ""].join("|");
+  }
+
+  function validateRoute() {
+    if (!pickup || !pickup.value) {
+      showToast("Choose where we should pick you up");
+      pickup && pickup.focus();
+      return false;
+    }
+    if (trip === "city-ride" && (!dropoff || !dropoff.value)) {
+      showToast("Choose where you are going");
+      dropoff && dropoff.focus();
+      return false;
+    }
+    if (scheduleRow && !scheduleRow.hasAttribute("hidden") && rideTime && !rideTime.value) {
+      showToast("Pick a pickup time, or switch back to Now");
+      rideTime.focus();
+      return false;
+    }
+    return true;
+  }
+
+  if (form) {
+    form.addEventListener("submit", function (event) {
       event.preventDefault();
-      const from = pickup ? pickup.value.trim() : "";
-      const to = dropoff ? dropoff.value.trim() : "";
-      const ridesSection = document.getElementById("rides");
+      if (!validateRoute()) return;
 
-      if (!from || !to) {
-        showToast("Add a pickup and drop-off to see prices");
-        if (!from && pickup) {
-          pickup.focus();
-        } else if (dropoff) {
-          dropoff.focus();
-        }
+      const key = currentKey();
+      setBusy(quoteBtn, true);
+      rpc("get_quote", {
+        p_trip: trip,
+        p_pickup: pickup.value,
+        p_dropoff: trip === "city-ride" ? dropoff.value : null
+      }).then(function (rows) {
+        const q = rows && rows[0];
+        if (!q) throw new Error("We couldn't price that trip. Please try again.");
+        lastQuote = q;
+        lastQuoteKey = key;
+        quoteFare.textContent = rupees(q.fare);
+        quoteDetail.textContent = q.distance_km
+          ? q.trip_name + " · about " + q.distance_km + " km"
+          : q.trip_name + " · " + q.price_unit;
+        quotePanel.removeAttribute("hidden");
+        quoteBtn.hidden = true;
+        const name = document.getElementById("rider-name");
+        if (name && !name.value) name.focus({ preventScroll: true });
+      }).catch(function (error) {
+        showToast(error.message);
+      }).then(function () {
+        setBusy(quoteBtn, false);
+      });
+    });
+  }
+
+  if (confirmBtn) {
+    confirmBtn.addEventListener("click", function () {
+      const name = document.getElementById("rider-name");
+      const phone = document.getElementById("rider-phone");
+      const riders = document.getElementById("passengers");
+      const note = document.getElementById("pickup-note");
+
+      if (!lastQuote || lastQuoteKey !== currentKey()) {
+        showToast("Your trip changed. Tap See fare again.");
+        resetQuote();
+        return;
+      }
+      if (!name.value.trim() || name.value.trim().length < 2) {
+        showToast("Add your name");
+        name.focus();
+        return;
+      }
+      if (phone.value.replace(/\D/g, "").length < 10) {
+        showToast("Add a phone number we can call or WhatsApp");
+        phone.focus();
         return;
       }
 
-      const distance = 2 + ((from.length * 7 + to.length * 13) % 170) / 10;
-      const fare = Math.round((49 + distance * 12) / 5) * 5;
-      showToast("Tuk Tuk from " + from + " to " + to + " · ₹" + fare + " · 3 min away");
-
-      if (ridesSection) {
-        ridesSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
+      setBusy(confirmBtn, true);
+      rpc("create_booking", {
+        p_trip: trip,
+        p_pickup: pickup.value,
+        p_dropoff: trip === "city-ride" ? dropoff.value : null,
+        p_rider_name: name.value,
+        p_rider_phone: phone.value,
+        p_passengers: Number(riders.value),
+        p_scheduled_at: scheduledAt(),
+        p_pickup_note: note.value || null
+      }).then(function (rows) {
+        const b = rows && rows[0];
+        if (!b) throw new Error("We couldn't save your booking. Please try again.");
+        document.getElementById("done-code").textContent = b.booking_code;
+        document.getElementById("done-text").textContent =
+          b.trip_name + " · " + rupees(b.fare) + ". We'll call or WhatsApp " + b.rider_phone +
+          " shortly to confirm your driver. Pay cash or UPI at the end of the ride.";
+        quotePanel.setAttribute("hidden", "");
+        bookingDone.removeAttribute("hidden");
+        bookingDone.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        lastQuote = null;
+      }).catch(function (error) {
+        showToast(error.message);
+      }).then(function () {
+        setBusy(confirmBtn, false);
+      });
     });
   }
 
+  const bookAnother = document.getElementById("book-another");
+  if (bookAnother) {
+    bookAnother.addEventListener("click", function () {
+      resetQuote();
+      if (quoteBtn) quoteBtn.hidden = false;
+      document.getElementById("book").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  // "Book" buttons on the ride and tour cards fill the form above.
   document.querySelectorAll(".choose-btn").forEach(function (button) {
     button.addEventListener("click", function () {
+      setTrip(button.dataset.trip);
+      if (button.dataset.dropoff && pickup && dropoff) {
+        pickup.value = "khajuraho-town";
+        fillDropoff();
+        dropoff.value = button.dataset.dropoff;
+      }
       document.querySelectorAll(".ride-card.is-selected").forEach(function (card) {
         card.classList.remove("is-selected");
       });
       const card = button.closest(".ride-card");
       if (card) card.classList.add("is-selected");
-      const ride = button.dataset.ride || "your ride";
-      showToast(ride + " selected. Ready when you are.");
-      button.textContent = "Selected";
-      document.querySelectorAll(".choose-btn").forEach(function (other) {
-        if (other !== button) other.textContent = "Choose";
-      });
+      document.getElementById("book").scrollIntoView({ behavior: "smooth", block: "start" });
+      showToast((TRIP_NAMES[button.dataset.trip] || "Ride") + ": choose your pickup, then tap See fare");
+      if (pickup && !pickup.value) {
+        setTimeout(function () { pickup.focus({ preventScroll: true }); }, 500);
+      }
     });
   });
 
-  const signupForm = document.getElementById("signup-form");
+  // Live fares for the airport and station cards; the printed price stays if this fails.
+  document.querySelectorAll("[data-quote-from]").forEach(function (el) {
+    rpc("get_quote", {
+      p_trip: "city-ride",
+      p_pickup: el.dataset.quoteFrom,
+      p_dropoff: el.dataset.quoteTo
+    }).then(function (rows) {
+      if (rows && rows[0]) {
+        const small = el.querySelector("small");
+        el.firstChild.nodeValue = "about " + rupees(rows[0].fare);
+        if (small) small.textContent = "from town";
+      }
+    }).catch(function () {});
+  });
 
-  if (signupForm) {
-    signupForm.addEventListener("submit", function (event) {
+  // --- Partner form -----------------------------------------------------
+  const partnerForm = document.getElementById("partner-form");
+  const partnerRole = document.getElementById("partner-role");
+  const partnerTitle = document.getElementById("partner-form-title");
+
+  function setPartnerRole(role) {
+    if (partnerRole) partnerRole.value = role;
+    if (partnerTitle) partnerTitle.textContent = role === "hotel" ? "Partner with us" : "Apply to drive";
+  }
+
+  document.querySelectorAll(".partner-open").forEach(function (button) {
+    button.addEventListener("click", function () {
+      setPartnerRole(button.dataset.role);
+      partnerForm.removeAttribute("hidden");
+      partnerForm.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById("partner-name").focus({ preventScroll: true });
+    });
+  });
+
+  if (partnerRole) {
+    partnerRole.addEventListener("change", function () { setPartnerRole(partnerRole.value); });
+  }
+
+  if (partnerForm) {
+    partnerForm.addEventListener("submit", function (event) {
       event.preventDefault();
-      const email = document.getElementById("email");
-      if (!email) return;
-      const value = email.value.trim();
-      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
-      if (!valid) {
-        showToast("Enter a valid email address to get the app link");
-        email.focus();
+      const name = document.getElementById("partner-name");
+      const phone = document.getElementById("partner-phone");
+      const message = document.getElementById("partner-message");
+      const submit = partnerForm.querySelector('button[type="submit"]');
+
+      if (!name.value.trim() || name.value.trim().length < 2) {
+        showToast("Add your name");
+        name.focus();
         return;
       }
-      showToast("App link sent to " + value);
-      signupForm.reset();
+      if (phone.value.replace(/\D/g, "").length < 10) {
+        showToast("Add a phone number we can call");
+        phone.focus();
+        return;
+      }
+
+      setBusy(submit, true);
+      rpc("submit_partner_enquiry", {
+        p_role: partnerRole.value,
+        p_name: name.value,
+        p_phone: phone.value,
+        p_message: message.value || null
+      }).then(function () {
+        showToast("Thanks " + name.value.trim().split(" ")[0] + ". We'll call you soon.");
+        partnerForm.reset();
+        partnerForm.setAttribute("hidden", "");
+      }).catch(function (error) {
+        showToast(error.message);
+      }).then(function () {
+        setBusy(submit, false);
+      });
     });
   }
 

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Indo Tuk Tuk — Ride the city, the Indo way</title>
-  <meta name="description" content="Book a tuk tuk, bike, or cab in seconds. Upfront fares, verified drivers, and rides across 28 Indian cities.">
+  <title>Indo Tuk Tuk — Auto rickshaw rides in Khajuraho</title>
+  <meta name="description" content="Book an auto rickshaw in Khajuraho. Fixed fares between your hotel, the temples, the airport and the railway station, plus temple tours and day trips.">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,17 +32,16 @@
       </a>
 
       <nav class="nav" id="nav" aria-label="Main navigation">
-        <a href="#rides">Ride</a>
+        <a href="#rides">Rides &amp; tours</a>
         <a href="#how">How it works</a>
-        <a href="#drive">Drive</a>
         <a href="#safety">Safety</a>
-        <a href="#cities">Cities</a>
+        <a href="#places">Where we go</a>
+        <a href="#drive">Drive with us</a>
         <a href="#faq">Help</a>
       </nav>
 
       <div class="header-actions">
-        <a class="btn btn-ghost" href="#app">Log in</a>
-        <a class="btn btn-dark" href="#app">Sign up</a>
+        <a class="btn btn-dark" href="#book">Book a ride</a>
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
           <span></span><span></span>
         </button>
@@ -51,61 +50,132 @@
   </header>
 
   <main id="main">
-    <section class="hero">
+    <section class="hero" id="book">
       <div class="container hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow reveal">India's three-wheeled way to move</p>
-          <h1 class="reveal">Hop in.<br><span class="highlight">Go anywhere.</span></h1>
-          <p class="hero-sub reveal">Tuk tuks, bikes, and cabs at your fingertips. Upfront fares, verified drivers, and a city that finally feels close.</p>
+          <p class="eyebrow reveal">Khajuraho's auto rickshaw service</p>
+          <h1 class="reveal">Hop in.<br><span class="highlight">See Khajuraho.</span></h1>
+          <p class="hero-sub reveal">Tuk tuk rides between your hotel, the temples, the airport and the railway station. Your fixed fare is shown before you book, and your driver knows every temple in town.</p>
 
           <form class="ride-form reveal" id="ride-form" novalidate>
+            <div class="trip-banner" id="trip-banner" hidden>
+              <span>Booking <strong id="trip-banner-name">City ride</strong></span>
+              <button class="trip-clear" type="button" id="trip-clear">Switch to a city ride</button>
+            </div>
+
             <div class="ride-fields">
               <div class="field">
                 <span class="field-dot" aria-hidden="true"></span>
                 <label for="pickup">Pickup</label>
-                <input id="pickup" name="pickup" type="text" placeholder="Where are you now?" autocomplete="street-address">
+                <select id="pickup" name="pickup" required>
+                  <option value="" selected disabled>Where should we pick you up?</option>
+                  <optgroup label="Stay and travel">
+                    <option value="khajuraho-town">Khajuraho town (hotel / homestay)</option>
+                    <option value="bus-stand">Khajuraho Bus Stand</option>
+                    <option value="airport">Khajuraho Airport (HJR)</option>
+                    <option value="railway-station">Khajuraho Railway Station</option>
+                    <option value="rajnagar">Rajnagar</option>
+                  </optgroup>
+                  <optgroup label="Temples">
+                    <option value="western-temples">Western Group of Temples</option>
+                    <option value="matangeshwar-temple">Matangeshwar Temple</option>
+                    <option value="eastern-temples">Eastern Group (Jain Temples)</option>
+                    <option value="duladeo-temple">Duladeo Temple (Southern Group)</option>
+                    <option value="chaturbhuj-temple">Chaturbhuj Temple (Southern Group)</option>
+                  </optgroup>
+                  <optgroup label="Sights">
+                    <option value="archaeological-museum">Archaeological Museum</option>
+                    <option value="shiv-sagar-lake">Shiv Sagar Lake</option>
+                    <option value="shilpgram">Shilpgram</option>
+                    <option value="beni-sagar-dam">Beni Sagar Dam</option>
+                  </optgroup>
+                </select>
                 <button class="swap-btn" type="button" id="swap-btn" aria-label="Swap pickup and drop-off">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v13M7 17l-3-3M7 17l3-3M17 20V7M17 7l-3 3M17 7l3 3"/></svg>
                 </button>
               </div>
-              <div class="field">
+              <div class="field" id="dropoff-field">
                 <span class="field-square" aria-hidden="true"></span>
                 <label for="dropoff">Drop-off</label>
-                <input id="dropoff" name="dropoff" type="text" placeholder="Where to?" autocomplete="off">
+                <select id="dropoff" name="dropoff">
+                  <option value="" selected disabled>Where to?</option>
+                </select>
               </div>
             </div>
 
             <div class="schedule-row" id="schedule-row" hidden>
-              <label for="ride-time">When should we pick you up?</label>
+              <label for="ride-time">When should we pick you up? (India time)</label>
               <input id="ride-time" name="ride-time" type="datetime-local">
             </div>
 
             <div class="ride-form-foot">
-              <button class="time-btn" type="button" id="schedule-toggle">
+              <button class="time-btn" type="button" id="schedule-toggle" aria-controls="schedule-row" aria-expanded="false">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
                 <span>Now</span>
               </button>
-              <button class="btn btn-dark btn-wide" type="submit">
-                See prices
+              <button class="btn btn-dark btn-wide" type="submit" id="quote-btn">
+                See fare
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               </button>
+            </div>
+
+            <div class="quote-panel" id="quote-panel" hidden>
+              <div class="quote-summary">
+                <div>
+                  <span class="quote-label">Fixed fare</span>
+                  <strong id="quote-fare">₹0</strong>
+                </div>
+                <span class="quote-detail" id="quote-detail"></span>
+              </div>
+              <div class="details-grid">
+                <div class="mini-field">
+                  <label for="rider-name">Your name</label>
+                  <input id="rider-name" name="rider-name" type="text" autocomplete="name" maxlength="80">
+                </div>
+                <div class="mini-field">
+                  <label for="rider-phone">Phone / WhatsApp</label>
+                  <input id="rider-phone" name="rider-phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="98765 43210" maxlength="20">
+                </div>
+                <div class="mini-field mini-narrow">
+                  <label for="passengers">Riders</label>
+                  <select id="passengers" name="passengers">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+                <div class="mini-field mini-wide">
+                  <label for="pickup-note">Hotel name or pickup details (optional)</label>
+                  <input id="pickup-note" name="pickup-note" type="text" maxlength="200" placeholder="e.g. Hotel name, room, flight or train number">
+                </div>
+              </div>
+              <button class="btn btn-dark btn-wide" type="button" id="confirm-btn">Confirm booking</button>
+              <p class="quote-note">Pay cash or UPI to your driver at the end. We'll call or WhatsApp you to confirm your driver.</p>
+            </div>
+
+            <div class="booking-done" id="booking-done" role="status" hidden>
+              <span class="check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>
+              <div>
+                <strong>Booked. Your code is <span id="done-code"></span></strong>
+                <p id="done-text"></p>
+                <button class="btn btn-outline btn-sm" type="button" id="book-another">Book another ride</button>
+              </div>
             </div>
           </form>
 
           <div class="hero-trust reveal">
             <div class="avatars" aria-hidden="true">
-              <span class="avatar a1">AR</span>
-              <span class="avatar a2">SK</span>
-              <span class="avatar a3">MJ</span>
-              <span class="avatar a4">NP</span>
+              <span class="avatar a1">RK</span>
+              <span class="avatar a2">SP</span>
+              <span class="avatar a3">MY</span>
             </div>
-            <p><strong>1.2 million riders</strong> already moving the Indo way</p>
+            <p><strong>Local Khajuraho drivers</strong>, booked in under a minute</p>
           </div>
 
           <ul class="hero-stats reveal">
-            <li><strong>4.9</strong><span>Average rating</span></li>
-            <li><strong>28</strong><span>Cities live</span></li>
-            <li><strong>3 min</strong><span>Average pickup</span></li>
+            <li><strong>₹60</strong><span>Minimum fare</span></li>
+            <li><strong>3</strong><span>Temple groups</span></li>
+            <li><strong>Cash · UPI</strong><span>Pay the driver</span></li>
           </ul>
         </div>
 
@@ -235,25 +305,25 @@
             <div class="float-card float-eta">
               <span class="pulse" aria-hidden="true"></span>
               <div>
-                <strong>Tuk Tuk nearby</strong>
-                <span>Arriving in 3 min</span>
+                <strong>Tuk tuk nearby</strong>
+                <span>Waiting near the temples</span>
               </div>
             </div>
 
             <div class="float-card float-fare">
               <div class="fare-amount">
-                <span>Upfront fare</span>
-                <strong>₹96</strong>
+                <span>Fixed fare</span>
+                <strong>₹120</strong>
               </div>
               <div class="fare-route">
-                <strong>Indiranagar → MG Road</strong>
-                <span>4.2 km · 12 min</span>
+                <strong>Your hotel → Airport</strong>
+                <span>About 5 km</span>
               </div>
             </div>
 
             <div class="float-card float-rating">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 3.1 6.3 7 1-5 4.9 1.2 6.9L12 17.8 5.7 21l1.2-6.9-5-4.9 7-1L12 2Z"/></svg>
-              <div><strong>4.9</strong><span>2,104 trips</span></div>
+              <div><strong>Temple tours</strong><span>from ₹349</span></div>
             </div>
           </div>
         </div>
@@ -264,212 +334,166 @@
       <div class="container">
         <div class="section-head reveal">
           <div>
-            <p class="eyebrow">Pick your ride</p>
-            <h2>A ride for every kind of day.</h2>
+            <p class="eyebrow">Rides &amp; tours</p>
+            <h2>One tuk tuk. Every way to see Khajuraho.</h2>
           </div>
-          <p class="section-sub">Short hop or long haul, there is an Indo ride for it. Fares are shown before you book, so there are no surprises at the end.</p>
+          <p class="section-sub">Hop across town, catch your flight or train, or keep a driver for the day. Every price is fixed before you book, for the whole auto (up to 3 riders).</p>
         </div>
 
-        <div class="tabs reveal" role="tablist" aria-label="Ride categories">
-          <button class="tab is-active" type="button" role="tab" aria-selected="true" data-tab="city">City rides</button>
-          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="outstation">Outstation</button>
-          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="rentals">Rentals</button>
+        <div class="tabs reveal" role="tablist" aria-label="Ride types">
+          <button class="tab is-active" type="button" role="tab" aria-selected="true" data-tab="rides">Rides</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="tours">Temple tours</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" data-tab="daytrips">Day trips</button>
         </div>
 
-        <div class="ride-panels">
-          <div class="ride-grid is-active" data-panel="city" role="tabpanel">
-            <article class="ride-card reveal">
-              <div class="ride-top">
-                <span class="ride-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h16v4H4z"/><path d="M5 14c0-3 2-5 5-5h4c3 0 5 2 5 5"/><circle cx="7.5" cy="18.5" r="2"/><circle cx="16.5" cy="18.5" r="2"/><path d="M9 9V6h6v3"/></svg>
-                </span>
-                <span class="ride-tag">Most booked</span>
-              </div>
-              <h3>Indo Tuk Tuk</h3>
-              <p>The nimble city classic. Perfect for one to three riders and a quick dash across traffic.</p>
-              <ul class="ride-meta">
-                <li>1–3 seats</li>
-                <li>3 min away</li>
-              </ul>
-              <div class="ride-foot">
-                <span class="price">from ₹49<small>base fare</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Tuk Tuk">Choose</button>
-              </div>
-            </article>
+        <div class="ride-grid ride-grid-3 is-active" data-panel="rides" role="tabpanel">
+          <article class="ride-card reveal">
+            <div class="ride-top">
+              <span class="ride-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h16v4H4z"/><path d="M5 14c0-3 2-5 5-5h4c3 0 5 2 5 5"/><circle cx="7.5" cy="18.5" r="2"/><circle cx="16.5" cy="18.5" r="2"/><path d="M9 9V6h6v3"/></svg>
+              </span>
+              <span class="ride-tag">Most booked</span>
+            </div>
+            <h3>City ride</h3>
+            <p>Point to point anywhere in town: your hotel, the temples, the market, the lake or the bus stand.</p>
+            <ul class="ride-meta"><li>Up to 3 riders</li><li>Priced by distance</li></ul>
+            <div class="ride-foot">
+              <span class="price">from ₹60<small>fixed fare</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="city-ride">Book</button>
+            </div>
+          </article>
 
-            <article class="ride-card reveal">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-green">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16V8a2 2 0 0 1 2-2h9l5 6h2v4h-2"/><path d="M3 16h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/></svg>
-                </span>
-                <span class="ride-tag tag-alt">Roomier</span>
-              </div>
-              <h3>Tuk Tuk XL</h3>
-              <p>Extra legroom, extra bags, extra company. Built for the whole crew and a market haul.</p>
-              <ul class="ride-meta">
-                <li>1–5 seats</li>
-                <li>5 min away</li>
-              </ul>
-              <div class="ride-foot">
-                <span class="price">from ₹79<small>base fare</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Tuk Tuk XL">Choose</button>
-              </div>
-            </article>
+          <article class="ride-card reveal">
+            <div class="ride-top">
+              <span class="ride-icon ride-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16l20-6-2-3-6 2-6-5H6l3 7-5 1.5L2 11H1z"/><path d="M3 21h18"/></svg>
+              </span>
+              <span class="ride-tag tag-alt">Airport</span>
+            </div>
+            <h3>Airport transfer</h3>
+            <p>To or from Khajuraho Airport (HJR). Add your flight number and we'll plan the pickup around it.</p>
+            <ul class="ride-meta"><li>Up to 3 riders</li><li>Room for bags</li></ul>
+            <div class="ride-foot">
+              <span class="price" data-quote-from="khajuraho-town" data-quote-to="airport">about ₹120<small>from town</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="city-ride" data-dropoff="airport">Book</button>
+            </div>
+          </article>
 
-            <article class="ride-card reveal">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-coral">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="m6 17 3-7h5l3 4h3"/><path d="m11 7 1-3h3"/></svg>
-                </span>
-                <span class="ride-tag tag-coral">Fastest</span>
-              </div>
-              <h3>Indo Bike</h3>
-              <p>Beat the traffic on two wheels. A quick, affordable solo ride with a helmet included.</p>
-              <ul class="ride-meta">
-                <li>1 rider</li>
-                <li>2 min away</li>
-              </ul>
-              <div class="ride-foot">
-                <span class="price">from ₹29<small>base fare</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Bike">Choose</button>
-              </div>
-            </article>
+          <article class="ride-card reveal">
+            <div class="ride-top">
+              <span class="ride-icon ride-icon-coral">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M9 21l-2 0M15 21h2M8 17l-2 4M16 17l2 4"/><circle cx="9" cy="14" r=".5" fill="currentColor"/><circle cx="15" cy="14" r=".5" fill="currentColor"/></svg>
+              </span>
+              <span class="ride-tag tag-coral">Trains</span>
+            </div>
+            <h3>Railway station transfer</h3>
+            <p>To or from Khajuraho Railway Station, a short drive out of town. Early and late trains welcome.</p>
+            <ul class="ride-meta"><li>Up to 3 riders</li><li>Book ahead</li></ul>
+            <div class="ride-foot">
+              <span class="price" data-quote-from="khajuraho-town" data-quote-to="railway-station">about ₹175<small>from town</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="city-ride" data-dropoff="railway-station">Book</button>
+            </div>
+          </article>
+        </div>
 
-            <article class="ride-card reveal">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-sand">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15h16l-1.5-5.5A3 3 0 0 0 15.6 7H8.4a3 3 0 0 0-2.9 2.5L4 15Z"/><path d="M4 15v4h3v-2"/><path d="M20 15v4h-3v-2"/><path d="M7 10h10"/></svg>
-                </span>
-                <span class="ride-tag tag-sand">AC comfort</span>
-              </div>
-              <h3>Indo Cab</h3>
-              <p>Air-conditioned comfort for longer trips, rainy days, or when you just want a calmer ride.</p>
-              <ul class="ride-meta">
-                <li>1–4 seats</li>
-                <li>6 min away</li>
-              </ul>
-              <div class="ride-foot">
-                <span class="price">from ₹129<small>base fare</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Cab">Choose</button>
-              </div>
-            </article>
-          </div>
+        <div class="ride-grid ride-grid-3" data-panel="tours" role="tabpanel" hidden>
+          <article class="ride-card" data-trip-card="western-temples-visit">
+            <div class="ride-top">
+              <span class="ride-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6H9l3-6Z"/><path d="M8 8h8l2 5H6l2-5Z"/><path d="M5 13h14v8H5z"/><path d="M10 21v-4h4v4"/></svg>
+              </span>
+              <span class="ride-tag">3 hours</span>
+            </div>
+            <h3>Western Temples visit</h3>
+            <p>Drop at the Western Group, your driver waits while you explore, then takes you back to your hotel.</p>
+            <ul class="ride-meta"><li>Return trip</li><li>Waiting included</li></ul>
+            <div class="ride-foot">
+              <span class="price">₹399<small>return trip</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="western-temples-visit">Book</button>
+            </div>
+          </article>
 
-          <div class="ride-grid" data-panel="outstation" role="tabpanel" hidden>
-            <article class="ride-card">
-              <div class="ride-top">
-                <span class="ride-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18"/><path d="M5 18 10 7l3 6 2-3 4 8"/><circle cx="17" cy="6" r="2"/></svg></span>
-                <span class="ride-tag">One way</span>
-              </div>
-              <h3>Indo Outstation</h3>
-              <p>City to city, on your schedule. Choose a one-way drop with a verified highway driver.</p>
-              <ul class="ride-meta"><li>1–4 seats</li><li>Book ahead</li></ul>
-              <div class="ride-foot">
-                <span class="price">from ₹14/km<small>outstation rate</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Outstation">Choose</button>
-              </div>
-            </article>
+          <article class="ride-card" data-trip-card="temple-circuit">
+            <div class="ride-top">
+              <span class="ride-icon ride-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              </span>
+              <span class="ride-tag tag-alt">Best value</span>
+            </div>
+            <h3>Full temple circuit</h3>
+            <p>Western, Eastern and Southern groups in one go, with waiting time at each stop.</p>
+            <ul class="ride-meta"><li>4–5 hours</li><li>All three groups</li></ul>
+            <div class="ride-foot">
+              <span class="price">₹799<small>per auto</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="temple-circuit">Book</button>
+            </div>
+          </article>
 
-            <article class="ride-card">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17V7h11l5 5v5"/><path d="M4 17h2"/><circle cx="9" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M11 17h4"/></svg></span>
-                <span class="ride-tag tag-alt">Round trip</span>
-              </div>
-              <h3>Weekend Escape</h3>
-              <p>A cab and driver for the whole weekend. Ideal for hill towns, temples, and coastal drives.</p>
-              <ul class="ride-meta"><li>Up to 6 seats</li><li>2–3 days</li></ul>
-              <div class="ride-foot">
-                <span class="price">from ₹3,499<small>per day</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Weekend Escape">Choose</button>
-              </div>
-            </article>
+          <article class="ride-card" data-trip-card="light-and-sound-show">
+            <div class="ride-top">
+              <span class="ride-icon ride-icon-sand">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+              </span>
+              <span class="ride-tag tag-sand">Evening</span>
+            </div>
+            <h3>Light &amp; Sound Show</h3>
+            <p>Evening drop for the show at the Western Group and a ride back after it ends.</p>
+            <ul class="ride-meta"><li>2 hours</li><li>Return trip</li></ul>
+            <div class="ride-foot">
+              <span class="price">₹349<small>return trip</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="light-and-sound-show">Book</button>
+            </div>
+          </article>
+        </div>
 
-            <article class="ride-card">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-coral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16 12 4l9 12"/><path d="M7 16h10"/><path d="M9 20h6"/></svg></span>
-                <span class="ride-tag tag-coral">Airport</span>
-              </div>
-              <h3>Airport Transfer</h3>
-              <p>Fixed fares, flight tracking, and a driver who waits if your flight runs late.</p>
-              <ul class="ride-meta"><li>1–4 seats</li><li>Meet and greet</li></ul>
-              <div class="ride-foot">
-                <span class="price">from ₹749<small>flat fare</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Airport Transfer">Choose</button>
-              </div>
-            </article>
+        <div class="ride-grid ride-grid-3" data-panel="daytrips" role="tabpanel" hidden>
+          <article class="ride-card" data-trip-card="raneh-falls">
+            <div class="ride-top">
+              <span class="ride-icon ride-icon-green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16"/><path d="M8 4v9M12 4v12M16 4v9"/><path d="M3 20c2-1.5 4-1.5 6 0s4 1.5 6 0 4-1.5 6 0"/></svg>
+              </span>
+              <span class="ride-tag tag-alt">About 20 km</span>
+            </div>
+            <h3>Raneh Falls &amp; Ken Gharial</h3>
+            <p>Canyon views at Raneh Falls and the Ken Gharial Sanctuary, then back to Khajuraho.</p>
+            <ul class="ride-meta"><li>5 hours</li><li>Return trip</li></ul>
+            <div class="ride-foot">
+              <span class="price">₹1,199<small>per auto</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="raneh-falls">Book</button>
+            </div>
+          </article>
 
-            <article class="ride-card">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-sand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-                <span class="ride-tag tag-sand">Groups</span>
-              </div>
-              <h3>Group Van</h3>
-              <p>One vehicle for the family, the wedding party, or the office offsite. Luggage space included.</p>
-              <ul class="ride-meta"><li>Up to 9 seats</li><li>Book ahead</li></ul>
-              <div class="ride-foot">
-                <span class="price">from ₹4,299<small>per day</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Group Van">Choose</button>
-              </div>
-            </article>
-          </div>
+          <article class="ride-card" data-trip-card="panna-national-park">
+            <div class="ride-top">
+              <span class="ride-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l5 7h-3l4 6H6l4-6H7l5-7Z"/><path d="M12 16v5"/></svg>
+              </span>
+              <span class="ride-tag">Safari</span>
+            </div>
+            <h3>Panna National Park gate</h3>
+            <p>Ride to the Madla gate for your safari and back. Safari tickets and jeeps are booked separately.</p>
+            <ul class="ride-meta"><li>Half day</li><li>Return trip</li></ul>
+            <div class="ride-foot">
+              <span class="price">₹1,099<small>per auto</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="panna-national-park">Book</button>
+            </div>
+          </article>
 
-          <div class="ride-grid" data-panel="rentals" role="tabpanel" hidden>
-            <article class="ride-card">
-              <div class="ride-top">
-                <span class="ride-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-                <span class="ride-tag">1 hour</span>
-              </div>
-              <h3>Tuk Tuk by the Hour</h3>
-              <p>Keep a tuk tuk and driver for errands, meetings, or a slow evening of street food.</p>
-              <ul class="ride-meta"><li>1–3 seats</li><li>Driver included</li></ul>
-              <div class="ride-foot">
-                <span class="price">from ₹249<small>per hour</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Tuk Tuk by the Hour">Choose</button>
-              </div>
-            </article>
-
-            <article class="ride-card">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8h14M5 16h14"/><circle cx="12" cy="12" r="9"/></svg></span>
-                <span class="ride-tag tag-alt">Half day</span>
-              </div>
-              <h3>City in a Day</h3>
-              <p>Four hours, multiple stops, one flat price. A relaxed way to see the city without parking.</p>
-              <ul class="ride-meta"><li>4 hours</li><li>Multiple stops</li></ul>
-              <div class="ride-foot">
-                <span class="price">from ₹899<small>per booking</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="City in a Day">Choose</button>
-              </div>
-            </article>
-
-            <article class="ride-card">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-coral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v10H3z"/><path d="M7 12h4"/><circle cx="17" cy="12" r="2"/></svg></span>
-                <span class="ride-tag tag-coral">Self drive</span>
-              </div>
-              <h3>Indo Self Drive</h3>
-              <p>Take the wheel of a compact car or scooter. Insurance and roadside help included.</p>
-              <ul class="ride-meta"><li>1–5 seats</li><li>Fuel included</li></ul>
-              <div class="ride-foot">
-                <span class="price">from ₹1,299<small>per day</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Indo Self Drive">Choose</button>
-              </div>
-            </article>
-
-            <article class="ride-card">
-              <div class="ride-top">
-                <span class="ride-icon ride-icon-sand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V9l8-5 8 5v9"/><path d="M9 18v-5h6v5"/></svg></span>
-                <span class="ride-tag tag-sand">Monthly</span>
-              </div>
-              <h3>Monthly Commute</h3>
-              <p>A regular driver for your daily office run, with a fixed monthly rate and priority pickup.</p>
-              <ul class="ride-meta"><li>Weekdays</li><li>Fixed driver</li></ul>
-              <div class="ride-foot">
-                <span class="price">from ₹5,999<small>per month</small></span>
-                <button class="btn btn-dark btn-sm choose-btn" type="button" data-ride="Monthly Commute">Choose</button>
-              </div>
-            </article>
-          </div>
+          <article class="ride-card" data-trip-card="pandav-falls">
+            <div class="ride-top">
+              <span class="ride-icon ride-icon-coral">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20l5-11 4 6 2-3 3 8"/><path d="M14 4v5"/></svg>
+              </span>
+              <span class="ride-tag tag-coral">Full day</span>
+            </div>
+            <h3>Pandav Falls</h3>
+            <p>Waterfall and caves on the Panna road, with a stop on the way back.</p>
+            <ul class="ride-meta"><li>6 hours</li><li>Return trip</li></ul>
+            <div class="ride-foot">
+              <span class="price">₹1,499<small>per auto</small></span>
+              <button class="btn btn-dark btn-sm choose-btn" type="button" data-trip="pandav-falls">Book</button>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -479,9 +503,9 @@
         <div class="section-head reveal">
           <div>
             <p class="eyebrow">How it works</p>
-            <h2>Booked in the time it takes to lock up.</h2>
+            <h2>Booked before your chai cools.</h2>
           </div>
-          <p class="section-sub">Three taps, one ride. Our app handles the rest, from matching you with a nearby driver to sharing the fare before you move.</p>
+          <p class="section-sub">No app to download and no haggling at the gate. Book here, and a local driver comes to you.</p>
         </div>
 
         <div class="steps">
@@ -490,24 +514,24 @@
             <div class="step-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
             </div>
-            <h3>Set your pickup</h3>
-            <p>Drop a pin, or type where you are. We will find the closest ride in seconds.</p>
+            <h3>Choose your pickup</h3>
+            <p>Your hotel, a temple, the bus stand, the airport or the station. Pick it from the list.</p>
           </article>
           <article class="step reveal">
             <span class="step-no">02</span>
             <div class="step-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             </div>
-            <h3>Pick your ride</h3>
-            <p>Compare fares for tuk tuk, bike, and cab. Choose the one that fits your day.</p>
+            <h3>See your fixed fare</h3>
+            <p>The price is worked out from the distance before you book. That is what you pay.</p>
           </article>
           <article class="step reveal">
             <span class="step-no">03</span>
             <div class="step-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/><circle cx="12" cy="12" r="9"/></svg>
             </div>
-            <h3>Hop in and go</h3>
-            <p>Track the driver live, share the trip with family, and pay in the app at the end.</p>
+            <h3>We confirm, you ride</h3>
+            <p>We call or WhatsApp you with your driver's details. Pay cash or UPI at the end.</p>
           </article>
         </div>
       </div>
@@ -526,29 +550,29 @@
             <span class="why-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
             </span>
-            <h3>Upfront fares</h3>
-            <p>See exactly what you will pay before you book. No meters, no haggling, no detour surprises.</p>
+            <h3>Fixed fares</h3>
+            <p>You see the price before you book. No meter, no bargaining, no tourist price.</p>
           </article>
           <article class="why-card reveal">
             <span class="why-icon why-icon-green">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="8"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6H9l3-6Z"/><path d="M8 8h8l2 5H6l2-5Z"/><path d="M5 13h14v8H5z"/></svg>
             </span>
-            <h3>Live tracking</h3>
-            <p>Watch your driver approach on the map and share your route with someone you trust.</p>
+            <h3>Drivers who know the temples</h3>
+            <p>Our drivers grew up here. They know the gates, the timings and the quiet corners.</p>
           </article>
           <article class="why-card reveal">
             <span class="why-icon why-icon-coral">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-5 3V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10Z"/><path d="M8 9h8M8 13h5"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             </span>
-            <h3>People, not bots</h3>
-            <p>Real support, day or night. Reach a human in the app whenever a ride needs a hand.</p>
+            <h3>Waits while you explore</h3>
+            <p>On tours your driver waits at each stop, so you never hunt for a ride back.</p>
           </article>
           <article class="why-card reveal">
             <span class="why-icon why-icon-sand">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
             </span>
-            <h3>Verified drivers</h3>
-            <p>Every driver is background checked, licensed, and rated after every single trip.</p>
+            <h3>Verified local drivers</h3>
+            <p>Every driver's ID, licence and auto papers are checked before they join.</p>
           </article>
         </div>
       </div>
@@ -560,14 +584,14 @@
           <div class="safety-copy">
             <p class="eyebrow eyebrow-light">Safety first, always</p>
             <h2>Every ride has a safety net built in.</h2>
-            <p class="safety-sub">From the moment you book to the second you step out, Indo Tuk Tuk keeps you connected to help and to the people who matter.</p>
+            <p class="safety-sub">From the moment you book to the moment you step out, you know who is driving and who to call.</p>
             <ul class="safety-list">
-              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>Verified drivers and vehicles</li>
-              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>Live trip sharing with family</li>
-              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>In-app emergency button</li>
-              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>24/7 human support line</li>
+              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>Driver name and auto number sent before pickup</li>
+              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>Fare agreed before you ride</li>
+              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>Your auto is yours, no sharing with strangers</li>
+              <li><span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg></span>A real person on the phone during your trip</li>
             </ul>
-            <a class="btn btn-light" href="#faq">Read our safety promise
+            <a class="btn btn-light" href="#faq">Read common questions
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
           </div>
@@ -576,7 +600,7 @@
             <div class="trip-card">
               <div class="trip-card-top">
                 <span class="trip-live"><i></i>Live trip</span>
-                <span class="trip-id">#IT-4821</span>
+                <span class="trip-id">#KJ-4821</span>
               </div>
               <div class="trip-map">
                 <svg viewBox="0 0 320 190" fill="none">
@@ -598,7 +622,7 @@
                 <span class="avatar trip-avatar">RK</span>
                 <div>
                   <strong>Ravi Kumar</strong>
-                  <span>Indo Tuk Tuk · KA 01 8842</span>
+                  <span>Indo Tuk Tuk · MP 16 R 4821</span>
                 </div>
                 <span class="trip-rating">4.9 ★</span>
               </div>
@@ -614,16 +638,43 @@
       </div>
     </section>
 
+    <section class="section cities" id="places">
+      <div class="container cities-inner">
+        <div class="cities-copy reveal">
+          <p class="eyebrow">Where we go</p>
+          <h2>All of Khajuraho, from hotel door to temple gate.</h2>
+          <p>These are our regular pickup and drop-off points. Staying somewhere else in town? Pick "Khajuraho town" and add your hotel name.</p>
+        </div>
+        <ul class="city-list reveal" id="place-list">
+          <li>Western Group of Temples</li>
+          <li>Matangeshwar Temple</li>
+          <li>Eastern Group (Jain Temples)</li>
+          <li>Duladeo Temple</li>
+          <li>Chaturbhuj Temple</li>
+          <li>Archaeological Museum</li>
+          <li>Shiv Sagar Lake</li>
+          <li>Shilpgram</li>
+          <li>Khajuraho Bus Stand</li>
+          <li>Khajuraho Airport (HJR)</li>
+          <li>Khajuraho Railway Station</li>
+          <li>Beni Sagar Dam</li>
+          <li>Rajnagar</li>
+          <li>Your hotel or homestay</li>
+        </ul>
+        <p class="cities-note reveal">Going further? See our <a href="#rides" data-open-tab="daytrips">day trips</a> to Raneh Falls, Panna and Pandav Falls.</p>
+      </div>
+    </section>
+
     <section class="section partner" id="drive">
       <div class="container">
         <div class="partner-grid">
           <article class="partner-card partner-drive reveal">
             <p class="eyebrow">Drive with us</p>
-            <h2>Your wheels. Your hours. Your income.</h2>
-            <p>Join 40,000 drivers earning on their own schedule. Weekly payouts, fuel bonuses, and a support team that knows the road.</p>
-            <a class="btn btn-dark" href="#app">Start driving
+            <h2>Own an auto in Khajuraho? Ride with us.</h2>
+            <p>Get bookings from visitors and locals, keep your own hours, and earn a fair, fixed fare on every trip.</p>
+            <button class="btn btn-dark partner-open" type="button" data-role="driver">Apply to drive
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
+            </button>
             <div class="partner-art" aria-hidden="true">
               <svg viewBox="0 0 240 150" fill="none">
                 <circle cx="170" cy="54" r="44" fill="#ffc53d" opacity=".5"/>
@@ -639,12 +690,12 @@
           </article>
 
           <article class="partner-card partner-business reveal">
-            <p class="eyebrow">Indo for Business</p>
-            <h2>Move your team without the paperwork.</h2>
-            <p>One dashboard for travel, monthly billing, and ride policies. Built for teams from five to five thousand.</p>
-            <a class="btn btn-outline" href="#app">Talk to sales
+            <p class="eyebrow">Hotels &amp; homestays</p>
+            <h2>Give your guests a ride they can trust.</h2>
+            <p>Book autos for guests at fixed prices, for station pickups, temple days and everything in between.</p>
+            <button class="btn btn-outline partner-open" type="button" data-role="hotel">Partner with us
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
+            </button>
             <div class="partner-art" aria-hidden="true">
               <svg viewBox="0 0 240 150" fill="none">
                 <rect x="36" y="36" width="168" height="92" rx="12" fill="#fffdf7" stroke="#dcd3c3"/>
@@ -658,133 +709,35 @@
               </svg>
             </div>
           </article>
-        </div>
-      </div>
-    </section>
 
-    <section class="section cities" id="cities">
-      <div class="container cities-inner">
-        <div class="cities-copy reveal">
-          <p class="eyebrow">On the road</p>
-          <h2>Live in 28 cities. Growing every month.</h2>
-          <p>From Bengaluru's lanes to Jaipur's pink streets, Indo Tuk Tuk is already part of the daily commute.</p>
-        </div>
-        <ul class="city-list reveal">
-          <li>Bengaluru</li>
-          <li>Mumbai</li>
-          <li>Delhi NCR</li>
-          <li>Hyderabad</li>
-          <li>Chennai</li>
-          <li>Pune</li>
-          <li>Jaipur</li>
-          <li>Kochi</li>
-          <li>Goa</li>
-          <li>Udaipur</li>
-          <li>Mysuru</li>
-          <li>Ahmedabad</li>
-          <li>Kolkata</li>
-          <li>Lucknow</li>
-          <li>Varanasi</li>
-          <li>Indore</li>
-          <li>Coimbatore</li>
-          <li>Bhopal</li>
-          <li>Surat</li>
-          <li>Nagpur</li>
-          <li>Chandigarh</li>
-          <li>Jodhpur</li>
-          <li>Patna</li>
-          <li>Ranchi</li>
-          <li>Guwahati</li>
-          <li>Visakhapatnam</li>
-          <li>Vijayawada</li>
-          <li>Thiruvananthapuram</li>
-        </ul>
-        <p class="cities-note reveal">Not in your city yet? <a href="#app">Tell us where to go next</a>.</p>
-      </div>
-    </section>
-
-    <section class="section app" id="app">
-      <div class="container">
-        <div class="app-card reveal">
-          <div class="app-copy">
-            <p class="eyebrow eyebrow-light">Get the app</p>
-            <h2>The whole city, in your pocket.</h2>
-            <p>Book, track, and pay in a few taps. Save favourite places, split fares with friends, and keep your receipts in one place.</p>
-            <div class="store-buttons">
-              <a class="store-btn" href="#app">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.5 12.6c0-2 1.6-3 1.7-3.1-1-1.4-2.4-1.6-2.9-1.6-1.2-.1-2.4.7-3 .7-.6 0-1.6-.7-2.6-.7-1.3 0-2.6.8-3.3 2-1.4 2.4-.4 6 1 8 .7 1 1.5 2.1 2.6 2 1-.1 1.4-.7 2.6-.7s1.6.7 2.7.7c1.1 0 1.8-1 2.5-2 .8-1.1 1.1-2.2 1.1-2.3 0 0-2.4-1-2.4-3ZM14.4 6.5c.5-.7.9-1.6.8-2.5-.8 0-1.8.5-2.4 1.2-.5.6-1 1.6-.8 2.5.9.1 1.8-.5 2.4-1.2Z"/></svg>
-                <span><small>Download on the</small>App Store</span>
-              </a>
-              <a class="store-btn" href="#app">
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3.2c-.3.3-.5.8-.5 1.4v14.8c0 .6.2 1.1.5 1.4l8.1-8.8L4 3.2Zm9.4 7.5 2.6-2.8-8.2-4.7c-.4-.2-.8-.3-1.1-.2l6.7 7.7Zm0 2.6-6.7 7.7c.3.1.7 0 1.1-.2l8.2-4.7-2.6-2.8Zm2 1.1 3.3-1.9c.8-.5.8-1.5 0-1.9l-3.3-1.9-2.8 2.9 2.8 2.8Z"/></svg>
-                <span><small>Get it on</small>Google Play</span>
-              </a>
+          <form class="partner-form" id="partner-form" novalidate hidden>
+            <div class="partner-form-head">
+              <h3 id="partner-form-title">Apply to drive</h3>
+              <p>Leave your number and we'll call you back.</p>
             </div>
-            <div class="app-rating">
-              <span>4.9 ★</span>
-              <span>1.2M+ downloads</span>
-              <span>Free to download</span>
-            </div>
-          </div>
-
-          <div class="app-visual" aria-hidden="true">
-            <div class="phone">
-              <div class="phone-notch"></div>
-              <div class="phone-screen">
-                <div class="phone-status">
-                  <span>9:41</span>
-                  <span class="status-icons"><i></i><i></i><i></i></span>
-                </div>
-                <div class="phone-map">
-                  <svg viewBox="0 0 300 330" fill="none" preserveAspectRatio="xMidYMid slice">
-                    <rect width="300" height="330" fill="#eaf1e7"/>
-                    <g stroke="#d3e2d4" stroke-width="10">
-                      <path d="M-20 70h340M-20 180h340M-20 270h340"/>
-                      <path d="M60 -20v380M170 -20v380M260 -20v380"/>
-                    </g>
-                    <path d="M-10 150h320" stroke="#c5d9c8" stroke-width="22"/>
-                    <g fill="#cfe0c9">
-                      <rect x="80" y="90" width="70" height="70" rx="8"/>
-                      <rect x="190" y="200" width="52" height="52" rx="8"/>
-                      <rect x="20" y="210" width="30" height="40" rx="6"/>
-                    </g>
-                    <path d="M96 262c22-30 46-44 80-46 28-2 48-16 62-44" stroke="#12846a" stroke-width="6" stroke-linecap="round"/>
-                    <circle cx="96" cy="262" r="10" fill="#0b2f27" stroke="#fff" stroke-width="3"/>
-                    <g transform="translate(230 160)">
-                      <circle r="20" fill="#fff"/>
-                      <path d="M-9 3c0-6 3-9 8-9h3c5 0 8 3 8 9v2H-9V3Z" fill="#ffc53d"/>
-                      <circle cx="-5" cy="7" r="3" fill="#0b2f27"/><circle cx="6" cy="7" r="3" fill="#0b2f27"/>
-                    </g>
-                    <circle cx="230" cy="160" r="30" fill="none" stroke="#12846a" stroke-width="2" opacity=".4"/>
-                  </svg>
-                  <div class="map-chip">
-                    <span class="pulse"></span> Driver 2 min away
-                  </div>
-                </div>
-                <div class="phone-sheet">
-                  <span class="sheet-grab"></span>
-                  <div class="sheet-driver">
-                    <span class="avatar sheet-avatar">RK</span>
-                    <div>
-                      <strong>Ravi Kumar</strong>
-                      <span>Tuk Tuk · KA 01 8842</span>
-                    </div>
-                    <span class="sheet-star">4.9 ★</span>
-                  </div>
-                  <div class="sheet-route">
-                    <div class="sheet-point"><i></i><span>Indiranagar, Bengaluru</span></div>
-                    <div class="sheet-line"></div>
-                    <div class="sheet-point"><b></b><span>MG Road, Bengaluru</span></div>
-                  </div>
-                  <div class="sheet-fare">
-                    <span>Upfront fare</span>
-                    <strong>₹96</strong>
-                  </div>
-                  <button class="btn btn-dark btn-wide" type="button" data-toast="Ride tracking opened">Track ride</button>
-                </div>
+            <div class="partner-form-grid">
+              <div class="mini-field">
+                <label for="partner-role">I am</label>
+                <select id="partner-role" name="role">
+                  <option value="driver">An auto driver</option>
+                  <option value="hotel">A hotel or homestay</option>
+                </select>
+              </div>
+              <div class="mini-field">
+                <label for="partner-name">Name</label>
+                <input id="partner-name" name="name" type="text" autocomplete="name" maxlength="80">
+              </div>
+              <div class="mini-field">
+                <label for="partner-phone">Phone</label>
+                <input id="partner-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="98765 43210" maxlength="20">
+              </div>
+              <div class="mini-field mini-wide">
+                <label for="partner-message">Anything we should know? (optional)</label>
+                <input id="partner-message" name="message" type="text" maxlength="500" placeholder="e.g. auto number, hotel name, best time to call">
               </div>
             </div>
-          </div>
+            <button class="btn btn-dark" type="submit">Send</button>
+          </form>
         </div>
       </div>
     </section>
@@ -794,32 +747,36 @@
         <div class="faq-copy reveal">
           <p class="eyebrow">Questions</p>
           <h2>Before you hop in.</h2>
-          <p>Can't find what you need? Our support team is awake in every city, every hour.</p>
-          <a class="btn btn-outline" href="#app">Visit help centre
+          <p>Can't find what you need? Book a ride and ask us when we call to confirm it.</p>
+          <a class="btn btn-outline" href="#book">Book a ride
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
 
         <div class="faq-list reveal">
           <details class="faq-item" open>
-            <summary>How is my fare calculated?<span class="faq-plus" aria-hidden="true"></span></summary>
-            <p>Your fare is based on distance, time, and current demand. We show the full amount before you book, and that is what you pay. No meter surprises, no cash negotiations.</p>
+            <summary>How is my fare worked out?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>City rides are priced by the distance between your pickup and drop-off, with a ₹60 minimum. Tours and day trips have one fixed price for the whole auto. You see the price before you book, and that is what you pay.</p>
           </details>
           <details class="faq-item">
-            <summary>Can I pay with cash?<span class="faq-plus" aria-hidden="true"></span></summary>
-            <p>Yes. Choose cash when you book, or link a card, UPI, or wallet in the app. You can switch your payment method right up until the trip ends.</p>
+            <summary>How do I pay?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Pay your driver in cash or by UPI at the end of the trip. There is nothing to pay online.</p>
           </details>
           <details class="faq-item">
-            <summary>What safety checks do drivers go through?<span class="faq-plus" aria-hidden="true"></span></summary>
-            <p>Every driver completes an identity check, a driving licence verification, and a background check before their first trip. Vehicles are inspected at onboarding and rated by riders after every ride.</p>
+            <summary>How many people fit in one auto?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Up to 3 adults with small bags. For bigger groups, book a second auto with the same pickup.</p>
           </details>
           <details class="faq-item">
-            <summary>Can I book a ride for someone else?<span class="faq-plus" aria-hidden="true"></span></summary>
-            <p>Yes. Add a guest rider in the app, and they will receive the driver details and live tracking link. You can follow the trip from your own phone as well.</p>
+            <summary>My flight or train is late. What happens?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Add your flight or train number in the pickup details when you book. We'll keep an eye on it and adjust your pickup.</p>
           </details>
           <details class="faq-item">
-            <summary>What happens if my driver is late?<span class="faq-plus" aria-hidden="true"></span></summary>
-            <p>You will see live arrival updates. If pickup takes longer than the promise window, we will credit a small wait voucher to your account automatically.</p>
+            <summary>Is the driver a temple guide?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Our drivers know the temples well and are happy to point you around, but they are not official guides. Licensed guides are available at the Western Group entrance.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How do I change or cancel a booking?<span class="faq-plus" aria-hidden="true"></span></summary>
+            <p>Tell us when we call or message to confirm, or reply to that message any time before pickup. Keep your booking code handy.</p>
           </details>
         </div>
       </div>
@@ -830,13 +787,11 @@
         <div class="signup-card reveal">
           <div>
             <p class="eyebrow">Ready when you are</p>
-            <h2>Your next ride is three minutes away.</h2>
+            <h2>Your Khajuraho tuk tuk is a minute away.</h2>
           </div>
-          <form class="signup-form" id="signup-form" novalidate>
-            <label class="sr-only" for="email">Email address</label>
-            <input id="email" name="email" type="email" placeholder="Enter your email" required>
-            <button class="btn btn-dark" type="submit">Get the app link</button>
-          </form>
+          <a class="btn btn-dark" href="#book">Book a ride
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
         </div>
       </div>
     </section>
@@ -859,59 +814,39 @@
             </span>
             <span class="brand-name">Indo<strong>Tuk Tuk</strong></span>
           </a>
-          <p>Moving India, three wheels at a time.</p>
-          <div class="footer-social">
-            <a href="#top" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
-            <a href="#top" aria-label="X"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 3h3l-6.6 7.6L22 21h-6l-4.7-6.1L5.9 21H3l7.1-8.1L2.5 3h6.2l4.2 5.6L17.5 3Zm-1.1 16h1.7L7.6 4.7H5.8L16.4 19Z"/></svg></a>
-            <a href="#top" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.5 3.5A2 2 0 1 0 4.5 7.5 2 2 0 0 0 4.5 3.5ZM3 9h3v11H3V9Zm5 0h2.9v1.5c.4-.8 1.5-1.8 3.3-1.8 3 0 3.8 1.9 3.8 4.8V20h-3v-5.6c0-1.5-.5-2.4-1.8-2.4-1.1 0-1.8.7-2.1 1.5-.1.3-.1.7-.1 1V20H8V9Z"/></svg></a>
-            <a href="#top" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.6 7.2c-.2-.9-.9-1.6-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4c-.9.2-1.6.9-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.8c.2.9.9 1.6 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8ZM10 15.2V8.8L15.5 12 10 15.2Z"/></svg></a>
-          </div>
+          <p>Khajuraho, three wheels at a time.</p>
         </div>
 
         <div class="footer-col">
-          <h3>Ride</h3>
-          <a href="#rides">Tuk Tuk</a>
-          <a href="#rides">Tuk Tuk XL</a>
-          <a href="#rides">Indo Bike</a>
-          <a href="#rides">Indo Cab</a>
-          <a href="#rides">Airport transfers</a>
+          <h3>Rides</h3>
+          <a href="#rides">City rides</a>
+          <a href="#rides">Airport transfer</a>
+          <a href="#rides">Railway station transfer</a>
         </div>
         <div class="footer-col">
-          <h3>Company</h3>
-          <a href="#why">About us</a>
-          <a href="#cities">Cities</a>
-          <a href="#drive">Careers</a>
-          <a href="#app">Newsroom</a>
-          <a href="#app">Investors</a>
+          <h3>Tours</h3>
+          <a href="#rides" data-open-tab="tours">Western Temples</a>
+          <a href="#rides" data-open-tab="tours">Full temple circuit</a>
+          <a href="#rides" data-open-tab="tours">Light &amp; Sound Show</a>
+          <a href="#rides" data-open-tab="daytrips">Day trips</a>
         </div>
         <div class="footer-col">
-          <h3>Support</h3>
-          <a href="#faq">Help centre</a>
+          <h3>Help</h3>
+          <a href="#faq">Questions</a>
           <a href="#safety">Safety</a>
-          <a href="#faq">Fare estimates</a>
-          <a href="#app">Lost and found</a>
-          <a href="#app">Contact us</a>
+          <a href="#places">Where we go</a>
         </div>
         <div class="footer-col">
           <h3>Partner</h3>
           <a href="#drive">Drive with us</a>
-          <a href="#drive">Indo for Business</a>
-          <a href="#drive">Fleet partners</a>
-          <a href="#app">Developer API</a>
-          <a href="#app">Press kit</a>
+          <a href="#drive">Hotels &amp; homestays</a>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; <span id="year">2026</span> Indo Tuk Tuk Mobility Pvt. Ltd. All rights reserved.</p>
+        <p>&copy; <span id="year">2026</span> Indo Tuk Tuk, Khajuraho, Madhya Pradesh.</p>
         <div class="footer-legal">
-          <a href="#top">Privacy</a>
-          <a href="#top">Terms</a>
-          <a href="#top">Cookies</a>
-          <button class="lang-btn" type="button" data-toast="Language switching is coming soon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg>
-            English (India)
-          </button>
+          <a href="#top">Back to top</a>
         </div>
       </div>
     </div>
