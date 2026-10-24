@@ -2686,3 +2686,57 @@ h1, h2, h3 {
     gap: 8px;
   }
 }
+
+/* Narrow phones: keep logo, call button and menu on one line ----------------- */
+
+@media (max-width: 420px) {
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-name {
+    font-size: .92rem;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .btn-call {
+    gap: 6px;
+    padding: .42rem .7rem .42rem .55rem;
+  }
+
+  .btn-call svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .call-text {
+    font-size: .82rem;
+  }
+
+  .menu-toggle {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+@media (max-width: 340px) {
+  .call-text {
+    display: none;
+  }
+
+  .btn-call {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .btn-call svg {
+    width: 19px;
+    height: 19px;
+  }
+}
