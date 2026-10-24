@@ -24,7 +24,7 @@ create table public.drivers (
 alter table public.drivers enable row level security;
 
 insert into public.drivers (name, phone)
-values ('Khajuraho Tuk Tuk rider', '+919893413847');
+values ('Indo Tuk Tuk rider', '+919893413847');
 
 -- Public functions ---------------------------------------------------------------
 

@@ -132,7 +132,7 @@
   });
 
   // --- Booking form -----------------------------------------------------
-  const FALLBACK_RIDER = { name: "Khajuraho Tuk Tuk rider", phone: "+919893413847" };
+  const FALLBACK_RIDER = { name: "Indo Tuk Tuk rider", phone: "+919893413847" };
 
   const form = document.getElementById("ride-form");
   const pickup = document.getElementById("pickup");
