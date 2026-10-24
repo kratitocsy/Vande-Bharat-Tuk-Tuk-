@@ -1,0 +1,94 @@
+export type Place = { slug: string; name: string; group: "Stay and travel" | "Temples" | "Sights" };
+
+export const PLACES: Place[] = [
+  { slug: "khajuraho-town", name: "Khajuraho town (hotel / homestay)", group: "Stay and travel" },
+  { slug: "bus-stand", name: "Khajuraho Bus Stand", group: "Stay and travel" },
+  { slug: "airport", name: "Khajuraho Airport (HJR)", group: "Stay and travel" },
+  { slug: "railway-station", name: "Khajuraho Railway Station", group: "Stay and travel" },
+  { slug: "rajnagar", name: "Rajnagar", group: "Stay and travel" },
+  { slug: "western-temples", name: "Western Group of Temples", group: "Temples" },
+  { slug: "matangeshwar-temple", name: "Matangeshwar Temple", group: "Temples" },
+  { slug: "eastern-temples", name: "Eastern Group (Jain Temples)", group: "Temples" },
+  { slug: "javari-temple", name: "Javari Temple", group: "Temples" },
+  { slug: "duladeo-temple", name: "Duladeo Temple (Southern Group)", group: "Temples" },
+  { slug: "chaturbhuj-temple", name: "Chaturbhuj Temple (Southern Group)", group: "Temples" },
+  { slug: "archaeological-museum", name: "Archaeological Museum", group: "Sights" },
+  { slug: "shiv-sagar-lake", name: "Shiv Sagar Lake", group: "Sights" },
+  { slug: "shilpgram", name: "Shilpgram", group: "Sights" },
+  { slug: "beni-sagar-dam", name: "Beni Sagar Dam", group: "Sights" },
+];
+
+export const PLACE_GROUPS = ["Stay and travel", "Temples", "Sights"] as const;
+
+export function placeName(slug: string) {
+  return PLACES.find((p) => p.slug === slug)?.name ?? "";
+}
+
+export type Trip = {
+  slug: string; // matches trips.slug in the database
+  name: string;
+  category: "ride" | "tour" | "daytrip";
+  needsDropoff: boolean;
+  tag: string;
+  blurb: string;
+  meta: [string, string];
+  page?: string; // landing page path, if there is one
+};
+
+export const TRIPS: Trip[] = [
+  {
+    slug: "city-ride", name: "City ride", category: "ride", needsDropoff: true, tag: "Most booked",
+    blurb: "Point to point anywhere in town: your hotel, the temples, the market, the lake or the bus stand.",
+    meta: ["Up to 3 riders", "Price agreed by phone"],
+  },
+  {
+    slug: "city-ride", name: "Airport transfer", category: "ride", needsDropoff: true, tag: "Airport",
+    blurb: "To or from Khajuraho Airport (HJR). Add your flight number and we'll plan the pickup around it.",
+    meta: ["Up to 3 riders", "Room for bags"], page: "/khajuraho-airport-transfer",
+  },
+  {
+    slug: "city-ride", name: "Railway station transfer", category: "ride", needsDropoff: true, tag: "Trains",
+    blurb: "To or from Khajuraho Railway Station, a short drive out of town. Early and late trains welcome.",
+    meta: ["Up to 3 riders", "Book ahead"], page: "/khajuraho-railway-station-transfer",
+  },
+  {
+    slug: "western-temples-visit", name: "Western Temples visit", category: "tour", needsDropoff: false, tag: "3 hours",
+    blurb: "Drop at the Western Group, your rider waits while you explore, then takes you back to your hotel.",
+    meta: ["Return trip", "Rider waits"], page: "/western-group-of-temples-tuk-tuk",
+  },
+  {
+    slug: "temple-circuit", name: "Full temple circuit", category: "tour", needsDropoff: false, tag: "Best value",
+    blurb: "Western, Eastern and Southern groups in one go, with waiting time at each stop.",
+    meta: ["4–5 hours", "All three groups"], page: "/khajuraho-temple-tour",
+  },
+  {
+    slug: "light-and-sound-show", name: "Light & Sound Show", category: "tour", needsDropoff: false, tag: "Evening",
+    blurb: "Evening drop for the show at the Western Group and a ride back after it ends.",
+    meta: ["2 hours", "Return trip"], page: "/light-and-sound-show-khajuraho",
+  },
+  {
+    slug: "raneh-falls", name: "Raneh Falls & Ken Gharial", category: "daytrip", needsDropoff: false, tag: "About 20 km",
+    blurb: "Canyon views at Raneh Falls and the Ken Gharial Sanctuary, then back to Khajuraho.",
+    meta: ["5 hours", "Return trip"], page: "/raneh-falls-tuk-tuk",
+  },
+  {
+    slug: "panna-national-park", name: "Panna National Park gate", category: "daytrip", needsDropoff: false, tag: "Safari",
+    blurb: "Ride to the Madla gate for your safari and back. Safari tickets and jeeps are booked separately.",
+    meta: ["Half day", "Return trip"], page: "/panna-national-park-tuk-tuk",
+  },
+  {
+    slug: "pandav-falls", name: "Pandav Falls", category: "daytrip", needsDropoff: false, tag: "Full day",
+    blurb: "Waterfall and caves on the Panna road, with a stop on the way back.",
+    meta: ["6 hours", "Return trip"], page: "/pandav-falls-tuk-tuk",
+  },
+];
+
+export const TRIP_NAMES: Record<string, string> = {
+  "city-ride": "City ride",
+  "western-temples-visit": "Western Temples visit",
+  "temple-circuit": "Full temple circuit",
+  "light-and-sound-show": "Light & Sound Show",
+  "raneh-falls": "Raneh Falls & Ken Gharial",
+  "panna-national-park": "Panna National Park gate",
+  "pandav-falls": "Pandav Falls",
+};
