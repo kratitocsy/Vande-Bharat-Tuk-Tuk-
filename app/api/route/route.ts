@@ -27,12 +27,17 @@ export async function GET(request: Request) {
   if (!from || !to) return NextResponse.json({ error: "Choose points inside the Khajuraho area" }, { status: 400 });
 
   const key = process.env.MAPPLS_CLOUD_KEY;
+  let upstream = key ? "unusable response" : "no key";
   if (key) {
     try {
       const url =
         `https://apis.mappls.com/advancedmaps/v1/${encodeURIComponent(key)}/route_adv/driving/` +
         `${from.lng},${from.lat};${to.lng},${to.lat}?geometries=geojson&overview=full&steps=false&alternatives=false`;
       const res = await fetch(url, { signal: AbortSignal.timeout(6000), cache: "no-store" });
+      if (!res.ok) {
+        upstream = `${res.status} ${(await res.text().catch(() => "")).slice(0, 160)}`;
+        console.warn("[route] upstream", upstream);
+      }
       if (res.ok) {
         const data = await res.json();
         const route = data?.routes?.[0];
@@ -48,14 +53,16 @@ export async function GET(request: Request) {
           });
         }
       }
-    } catch {
-      // fall through to the estimate
+    } catch (error) {
+      upstream = error instanceof Error ? error.message : "error";
+      console.warn("[route] failed", upstream);
     }
   }
 
   const km = Math.round(straightLineKm(from, to) * 1.3 * 10) / 10;
   return NextResponse.json({
     source: "estimate",
+    upstream,
     distanceKm: km,
     durationMin: Math.max(1, Math.round((km / 20) * 60)), // about 20 km/h in town
   });

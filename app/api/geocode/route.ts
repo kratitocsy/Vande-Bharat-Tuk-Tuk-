@@ -34,11 +34,18 @@ export async function GET(request: Request) {
     const query = /khajuraho/i.test(q) ? q : `${q}, Khajuraho, Madhya Pradesh`;
     const url = `https://apis.mappls.com/advancedmaps/v1/${encodeURIComponent(key)}/geo_code?addr=${encodeURIComponent(query)}`;
     const res = await fetch(url, { signal: AbortSignal.timeout(6000), cache: "no-store" });
-    if (!res.ok) return NextResponse.json({ error: "Search is unavailable right now" }, { status: 502 });
-    const hit = pick(await res.json());
+    if (!res.ok) {
+      const detail = (await res.text().catch(() => "")).slice(0, 160);
+      console.warn("[geocode] upstream", res.status, detail);
+      return NextResponse.json({ error: "Search is unavailable right now", upstream: res.status, detail }, { status: 502 });
+    }
+    const raw = await res.json();
+    const hit = pick(raw);
+    if (!hit) console.warn("[geocode] no usable result", JSON.stringify(raw).slice(0, 300));
     if (!hit) return NextResponse.json({ error: "We could not find that place near Khajuraho" }, { status: 404 });
     return NextResponse.json(hit);
-  } catch {
-    return NextResponse.json({ error: "Search is unavailable right now" }, { status: 502 });
+  } catch (error) {
+    console.warn("[geocode] failed", error instanceof Error ? error.message : error);
+    return NextResponse.json({ error: "Search is unavailable right now", detail: error instanceof Error ? error.message : "error" }, { status: 502 });
   }
 }
