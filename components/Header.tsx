@@ -42,10 +42,12 @@ export function Header() {
       }`}
     >
       <div className="container-x flex h-[70px] items-center gap-2 sm:h-[78px]">
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-display text-[0.95rem] font-bold tracking-tight sm:gap-2.5 sm:text-[1.2rem]" aria-label="Indo Taxi home">
-          <LogoMark className="h-[34px] w-[34px] sm:h-10 sm:w-10" />
+        <Link href="/" className="flex shrink-0 items-center gap-2 font-display text-[0.92rem] font-semibold sm:gap-2.5 sm:text-[1.15rem]" aria-label="Indo Tuk Tuk home">
+          <span className="grid h-[34px] w-[34px] place-items-center rounded-[10px] bg-green-deep sm:h-[40px] sm:w-[40px] sm:rounded-xl">
+            <LogoMark />
+          </span>
           <span>
-            indo<strong className="text-green">taxi</strong>
+            Indo<strong className="ml-1 text-green">Tuk Tuk</strong>
           </span>
         </Link>
 
