@@ -32,7 +32,7 @@ export async function GET(request: Request) {
 
   try {
     const query = /khajuraho/i.test(q) ? q : `${q}, Khajuraho, Madhya Pradesh`;
-    const url = `https://apis.mappls.com/advancedmaps/v1/${encodeURIComponent(key)}/geo_code?addr=${encodeURIComponent(query)}`;
+    const url = `https://search.mappls.com/search/address/geocode?address=${encodeURIComponent(query)}&access_token=${encodeURIComponent(key)}`;
     const res = await fetch(url, { signal: AbortSignal.timeout(6000), cache: "no-store" });
     if (!res.ok) {
       const detail = (await res.text().catch(() => "")).slice(0, 160);

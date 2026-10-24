@@ -31,8 +31,8 @@ export async function GET(request: Request) {
   if (key) {
     try {
       const url =
-        `https://apis.mappls.com/advancedmaps/v1/${encodeURIComponent(key)}/route_adv/driving/` +
-        `${from.lng},${from.lat};${to.lng},${to.lat}?geometries=geojson&overview=full&steps=false&alternatives=false`;
+        `https://route.mappls.com/route/direction/route_adv/driving/${from.lng},${from.lat};${to.lng},${to.lat}` +
+        `?access_token=${encodeURIComponent(key)}&geometries=geojson&overview=full&steps=false&alternatives=false`;
       const res = await fetch(url, { signal: AbortSignal.timeout(6000), cache: "no-store" });
       if (!res.ok) {
         upstream = `${res.status} ${(await res.text().catch(() => "")).slice(0, 160).replaceAll(key, "***")}`;

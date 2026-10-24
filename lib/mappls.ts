@@ -22,7 +22,7 @@ export function loadMappls(timeoutMs = 10000): Promise<Mappls> {
 
   loading = new Promise<Mappls>((resolve, reject) => {
     const script = document.createElement("script");
-    script.src = `https://apis.mappls.com/advancedmaps/api/${MAPPLS_KEY}/map_sdk?layer=vector&v=3.0`;
+    script.src = `https://sdk.mappls.com/map/sdk/web?v=3.0&access_token=${encodeURIComponent(MAPPLS_KEY)}`;
     script.async = true;
     const timer = window.setTimeout(() => {
       loading = null;
